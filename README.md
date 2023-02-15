@@ -1,1 +1,1 @@
-# Cpp Blade SKD
+# Cpp Blade SDK
