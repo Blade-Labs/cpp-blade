@@ -14,7 +14,7 @@ set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(hedera-sdk-cpp)
 
 
-include_directories(${hedera-sdk-cpp_SOURCE_DIR}/Debug/Darwin/arm64/include)
+include_directories(${hedera-sdk-cpp_SOURCE_DIR}/Release/Linux/x86_64/include)
 
 #message( "${hedera-sdk-cpp_SOURCE_DIR}/Release/Darwin/arm64/include")
 
