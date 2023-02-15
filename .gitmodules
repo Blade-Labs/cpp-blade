@@ -1,3 +1,0 @@
-[submodule "hedera-sdk-cpp"]
-	path = hedera-sdk-cpp
-	url = git@github.com:hashgraph/hedera-sdk-cpp.git
