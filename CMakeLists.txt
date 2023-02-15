@@ -13,9 +13,13 @@ FetchContent_Declare(
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(hedera-sdk-cpp)
 
-
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/Release/Linux/x86_64/include)
 
-#message( "${hedera-sdk-cpp_SOURCE_DIR}/Release/Darwin/arm64/include")
+
+
+
+#target_link_libraries(${PROJECT_NAME} PRIVATE hedera-sdk-cpp)
 
 add_executable(${PROJECT_NAME} main.cpp)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE hedera-sdk-cpp)
