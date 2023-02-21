@@ -4,11 +4,10 @@
 #include "AccountCreateTransaction.h"
 #include "ChunkedTransaction.h"
 
-namespace AccountHelper
+namespace AccountService
 {
 	using namespace Hedera;
-    using namespace proto;
-
+  
 	int executeUpdateAccountTransactions(
         Client* client, 
         std::unique_ptr < ECDSAsecp256k1PrivateKey> &privateKey,
@@ -40,16 +39,3 @@ namespace AccountHelper
           return 0;
         }
  }
-
-namespace proto
- {
- class CryptoCreateTransactionBody;
- }
-
-
-class CustomTransaction : public Transaction<CustomTransaction>
- {
-        public:
-          CustomTransaction();
-          ~CustomTransaction() override = default;
- };

@@ -20,12 +20,17 @@ find_package(re2 CONFIG REQUIRED)
 find_package(absl CONFIG REQUIRED)
 find_package(upb CONFIG REQUIRED)
 find_package(Threads REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_package(Boost REQUIRED)
 
-include_directories(${hedera-sdk-cpp_SOURCE_DIR}/Release/Linux/x86_64/include)
+include_directories(${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/include)
 add_executable(${PROJECT_NAME} main.cpp)
 
-#target_link_libraries(${PROJECT_NAME} PRIVATE hedera-sdk-cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/Release/Linux/x86_64/lib/libhedera-sdk-cpp.a)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libhedera-sdk-cpp.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libhapi.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libcrypto.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libssl.a)
 
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OSX_CORE_FOUNDATION})
@@ -144,4 +149,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 # Install Library & Headers
 install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)
 
+file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/examples/${CMAKE_BUILD_TYPE}/testnet.pb
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/examples/${CMAKE_BUILD_TYPE}/mainnet.pb
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+
+file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/examples/${CMAKE_BUILD_TYPE}/bip39-english.txt
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/examples/${CMAKE_BUILD_TYPE}/legacy-english.txt
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 
