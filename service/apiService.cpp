@@ -51,44 +51,44 @@ namespace ApiService {
         net::io_context ioc;
 
         // Create the SSL context and configure it
-        // boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
-        // ctx.set_default_verify_paths();
-        // ctx.set_verify_mode(boost::asio::ssl::verify_peer);
+        boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
+        ctx.set_default_verify_paths();
+        ctx.set_verify_mode(boost::asio::ssl::verify_peer);
 
-        // // Create the SSL stream and connect to the server
-        // boost::asio::ssl::stream<tcp::socket> stream(ioc, ctx);
-        // tcp::resolver resolver(ioc);
+        // Create the SSL stream and connect to the server
+        boost::asio::ssl::stream<tcp::socket> stream(ioc, ctx);
+        tcp::resolver resolver(ioc);
 
-        // auto const results = resolver.resolve(apiHost, "443");
+        auto const results = resolver.resolve(apiHost, "443");
 
-        // net::connect(stream.next_layer(), results.begin(), results.end());
-        // stream.handshake(boost::asio::ssl::stream_base::client);
-
-
-        // // Make the HTTP request
-        // http::request<http::string_body> req = make_request(apiHost, path, body, options);
-        // http::write(stream, req);
-
-        // // Receive the HTTP response
-        // boost::beast::flat_buffer buffer;
-        // http::response<http::dynamic_body> res;
-        // http::read(stream, buffer, res);
-
-        // //std::cout << "HTTP response: " << res.result_int() << std::endl;
-        // //std::cout << "HTTP message: " << res << std::endl;
-
-        // if (res.result_int() != 200)
-        // {
-        //   std::cout << "HTTP response: " << res.result_int() << std::endl;
-        //   std::cout << "HTTP message: " << res << std::endl;
-        //   throw;
-        // }
+        net::connect(stream.next_layer(), results.begin(), results.end());
+        stream.handshake(boost::asio::ssl::stream_base::client);
 
 
+        // Make the HTTP request
+        http::request<http::string_body> req = make_request(apiHost, path, body, options);
+        http::write(stream, req);
 
-        // //  json account = json::parse(res);
-        // json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
-        json result = nlohmann::json::parse("{}");
+        // Receive the HTTP response
+        boost::beast::flat_buffer buffer;
+        http::response<http::dynamic_body> res;
+        http::read(stream, buffer, res);
+
+        //std::cout << "HTTP response: " << res.result_int() << std::endl;
+        //std::cout << "HTTP message: " << res << std::endl;
+
+        if (res.result_int() != 200)
+        {
+          std::cout << "HTTP response: " << res.result_int() << std::endl;
+          std::cout << "HTTP message: " << res << std::endl;
+          throw;
+        }
+
+
+
+        //  json account = json::parse(res);
+        json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
+        // json result = nlohmann::json::parse("{}");
 
         //std::cout << result.dump(4) << std::endl;
 
@@ -97,7 +97,7 @@ namespace ApiService {
         //return boost::beast::buffers_to_string(res.body().data());
     }
 
-    
+
 
     json createAccount(std::shared_ptr<PublicKey> publicKey,
                       std::string apiHost,

@@ -7,11 +7,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FetchContent)
 FetchContent_Declare(
         hedera-sdk-cpp
-	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.2.1/hedera-sdk-cpp-v0.2.1.tar.gz
-        URL_HASH SHA256=cab4d1f213251c3c1cd368d2e520c572cd8d522b776d3bdfe007fc3a24e21aa1
+	URL https://github.com/hashgraph/hedera-sdk-cpp/archive/refs/tags/v0.3.0.tar.gz
+        URL_HASH SHA256=b644fa28a0299b32728d66612969e10fd77f7a7eaaa4caa8f7591877e0c95c8e
 )
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(hedera-sdk-cpp)
+
+
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME ON)
 
 find_package(ZLIB REQUIRED)
 find_package(Protobuf CONFIG REQUIRED)
@@ -21,16 +26,20 @@ find_package(absl CONFIG REQUIRED)
 find_package(upb CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(OpenSSL REQUIRED)
 find_package(Boost REQUIRED)
 
+
+include_directories(${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/include)
+include_directories(${hedera-sdk-cpp_SOURCE_DIR}/sdk/main/include)
 add_executable(${PROJECT_NAME} main.cpp)
 
-
-target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libhedera-sdk-cpp.a)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libhapi.a)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libcrypto.a)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libssl.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE hedera-sdk-cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_ROOT}/lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE dl)
 
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OSX_CORE_FOUNDATION})
@@ -149,13 +158,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 # Install Library & Headers
 install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)
 
-file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/examples/${CMAKE_BUILD_TYPE}/testnet.pb
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/examples/${CMAKE_BUILD_TYPE}/mainnet.pb
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-
-file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/examples/${CMAKE_BUILD_TYPE}/bip39-english.txt
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/examples/${CMAKE_BUILD_TYPE}/legacy-english.txt
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-
+file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/addressbook/testnet.pb DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/addressbook/mainnet.pb DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/wordlists/bip39-english.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/wordlists/legacy-english.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})

@@ -1,3 +1,5 @@
+#define BOOST_NETWORK_ENABLE_HTTPS
+
 #include "ECDSAsecp256k1PrivateKey.h"
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
@@ -7,25 +9,9 @@
 
 namespace ApiService
 {
-    struct Options;
-    struct AccountData;
+//     struct Options;
+//     struct AccountData;
     
-    // Helper function to generate the HTTP request
-    http::request<http::string_body> make_request(
-        const std::string& host, 
-        const std::string& target, 
-        const std::string& body,
-        struct Options options
-    );
-
-
-    json makeRequestPost(
-        std::string apiHost,
-        std::string path,
-        std::string body,
-        struct Options options
-    );
-
     json createAccount(
         std::shared_ptr<PublicKey> publicKey,
         std::string apiHost,
@@ -34,5 +20,21 @@ namespace ApiService
         std::string dAppCode,
         std::string network
     );
+
+    json makeRequestPost(
+        std::string apiHost,
+        std::string path,
+        std::string body,
+        struct Options options
+    );
+
+    // Helper function to generate the HTTP request
+    http::request<http::string_body> make_request(
+        const std::string& host, 
+        const std::string& target, 
+        const std::string& body,
+        struct Options options
+    );
+
 }
 
