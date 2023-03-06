@@ -10,8 +10,6 @@ namespace AccountService
     std::string decoded;
     decoded.resize(boost::beast::detail::base64::decoded_size(encoded.size()));
     boost::beast::detail::base64::decode(&decoded[0], encoded.data(), encoded.size());
-    // std::cout << "Bytes:" << std::endl;
-
     std::vector<unsigned char> output(decoded.begin(), decoded.end() - 1);
     return output;
   }
@@ -21,33 +19,27 @@ namespace AccountService
         std::unique_ptr < ECDSAsecp256k1PrivateKey> &privateKey,
         std::string updateAccountTransactionBytes,
         std::string transactionBytes
-    ) {
+  ) {
+    if (updateAccountTransactionBytes != "")
+    {
+      std::cout << "updateAccountTransactionBytes: " << updateAccountTransactionBytes << std::endl;
+      std::vector<unsigned char> bytes = base64ToVector(updateAccountTransactionBytes);
+      // Transaction<TransferTransaction>::fromBytes(bytes);
+      
+      // auto [index, variant] = Transaction<AccountCreateTransaction>::fromBytes(bytes);
+                  
+      // std::cout << "INDEX: " << index << std::endl;
+      // std::cout << "variant: " << variant << std::endl;
+    }
 
-        std::cout << "executeUpdateAccountTransactions" << std::endl;
-        std::cout << "PrivateKey (helper): " << privateKey->toString() << std::endl;
-        std::cout << "updateAccountTransactionBytes: " << updateAccountTransactionBytes << std::endl;
-        std::cout << "transactionBytes: " << transactionBytes << std::endl;
+    if (transactionBytes != "")
+    {
+      std::cout << "transactionBytes: " << transactionBytes << std::endl;
+      std::vector<unsigned char> bytes = base64ToVector(transactionBytes);
+      
+      // TODO create and execute transaction
+    }
 
-        //Hedera::Transaction<> transaction;
-
-          if (updateAccountTransactionBytes != "")
-          {
-            std::vector<unsigned char> bytes = base64ToVector(updateAccountTransactionBytes);
-            Transaction<TransferTransaction>::fromBytes(bytes);
-            
-            // auto [index, variant] = Transaction<AccountCreateTransaction>::fromBytes(bytes);
-                        
-            // std::cout << "INDEX: " << index << std::endl;
-            // std::cout << "variant: " << variant << std::endl;
-          }
-
-          if (transactionBytes != "")
-          {
-            //const buffer = Buffer.from(transactionBytes, "base64");
-            //const transaction = await Transaction.fromBytes(buffer).sign(privateKey);
-            //await transaction.execute(client);
-          }
-
-          return 0;
-        }
- }
+    return 0;
+  }
+}

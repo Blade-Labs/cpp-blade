@@ -21,6 +21,11 @@ namespace ApiService
         std::string network
     );
 
+    std::string getAccountsFromPublicKey(
+        std::shared_ptr<PublicKey> publicKey,
+        std::string network
+    );
+
     json makeRequestPost(
         std::string apiHost,
         std::string path,
