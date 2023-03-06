@@ -7,7 +7,7 @@
 
 ## Create account (direct)
 
-./blade-cpp createAccount "operatorAccountId" operatorPrivateKeyED25519
+./blade-cpp createAccount operatorAccountId operatorPrivateKeyED25519
 
 Example: `./blade-cpp createAccount 0.0.8298 f38f262dbbb197a0b3aaff0cf76ea573a1185b5fe8e1cfe13c41efdc280b5073`
 
