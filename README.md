@@ -35,3 +35,10 @@ Example: `./blade-cpp sign "test" 4A4935857096E9D97955800946A66F87DE35DA54EC9A91
 ./blade-cpp verify "message" signatureHex publicKey
 
 Example: `./blade-cpp verify "test" eee555e99410caa406d73ebf192dd88bee5623e14b77a0932cfdd517c0ff5d895a42508f54e10093ed378728c4f7a6ee2012193451a0a37b3df221ff8eb3d26b 03D01617265176DCAD9EF9993A2B364D372E901530CAD667F25DA1E37F45CFAB77`
+
+## Transfer Hbars
+
+## Transfer tokens
+
+## Example: how to include this to external project 
+
