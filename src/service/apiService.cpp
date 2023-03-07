@@ -1,3 +1,5 @@
+#include "../../include/service/apiService.h"
+
 namespace ApiService {
     using namespace Hedera;
     namespace net = boost::asio;
@@ -152,7 +154,7 @@ namespace ApiService {
 
         json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
 
-        std::cout << result.dump(4) << std::endl;
+        // std::cout << result.dump(4) << std::endl;
 
         return result;
     }
@@ -188,7 +190,6 @@ namespace ApiService {
       }
 
       std::string apiPath = "/api/v1/accounts?account.publickey=" + publicKey->toString();
-      std::cout << apiHost << apiPath << std::endl;
       json resoponse = makeRequestGet(apiHost, apiPath);
           
 

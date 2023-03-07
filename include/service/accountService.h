@@ -4,8 +4,6 @@
 #include "AccountCreateTransaction.h"
 #include "ChunkedTransaction.h"
 
-#include "accountService.cpp"
-
 namespace AccountService
 {
 	int executeUpdateAccountTransactions(

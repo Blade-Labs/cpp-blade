@@ -5,12 +5,15 @@
 #include <boost/beast.hpp>
 #include <boost/beast/ssl.hpp>
 #include <nlohmann/json.hpp>
-#include "apiService.cpp"
 
-namespace ApiService
-{
-//     struct Options;
-//     struct AccountData;
+using namespace Hedera;
+
+namespace ApiService {
+    namespace http = boost::beast::http;
+    using json = nlohmann::json;
+    
+    struct Options;
+    struct AccountData;
     
     json createAccount(
         std::shared_ptr<PublicKey> publicKey,

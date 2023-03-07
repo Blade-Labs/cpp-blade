@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.15...3.24)
+set(namespace "Blade")
 project(blade-cpp VERSION 0.0.1 DESCRIPTION "Blade SDK C++" LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -33,7 +34,38 @@ find_package(Boost REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/include)
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/sdk/main/include)
-add_executable(${PROJECT_NAME} main.cpp)
+# add_executable(${PROJECT_NAME} src/main.cpp)
+add_library(${PROJECT_NAME} STATIC)
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        src/main.cpp
+)
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        # where the library itself will look for its internal headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PUBLIC
+        # where top-level project will look for the library's public headers
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        # where external projects will look for the library's public headers
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+set(public_headers
+    include/main.h
+)
+
+# not for MSVC
+if(CMAKE_COMPILER_IS_GNUCXX)
+    # compile options for this target only
+    # treat warnings as errors
+    target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
+endif()
+
+# where to find our CMake modules
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+#message(STATUS "CMake module path: ${CMAKE_MODULE_PATH}")
+# include(Installing)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE hedera-sdk-cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBRARIES})
