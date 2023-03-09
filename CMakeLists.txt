@@ -34,11 +34,11 @@ find_package(Boost REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/include)
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/sdk/main/include)
-# add_executable(${PROJECT_NAME} src/main.cpp)
+# add_executable(${PROJECT_NAME} src/BladeSDK.cpp)
 add_library(${PROJECT_NAME} STATIC)
 target_sources(${PROJECT_NAME}
     PRIVATE
-        src/main.cpp
+        src/BladeSDK.cpp
 )
 target_include_directories(${PROJECT_NAME}
     PRIVATE
@@ -52,7 +52,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 set(public_headers
-    include/main.h
+    include/BladeSDK.h
 )
 
 # not for MSVC

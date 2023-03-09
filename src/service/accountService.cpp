@@ -2,8 +2,8 @@
 
 using namespace Hedera;
 
-namespace AccountService
-{
+namespace BladeSDK {
+namespace AccountService {
 	
   
   std::vector<unsigned char> base64ToVector(std::string encoded) {
@@ -42,4 +42,4 @@ namespace AccountService
 
     return 0;
   }
-}
+}}

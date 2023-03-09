@@ -11,6 +11,7 @@
 
 using namespace Hedera;
 
+namespace BladeSDK {
 namespace ApiService {
     namespace http = boost::beast::http;
     using json = nlohmann::json;
@@ -23,13 +24,7 @@ namespace ApiService {
       std::string dAppCode;
     };
 
-    struct AccountData
-    {
-      std::string seedPhrase;
-      std::string publicKey;
-      std::string privateKey;
-      std::string accountId;
-    };
+
     
     json createAccount(
         std::shared_ptr<PublicKey> publicKey,
@@ -60,6 +55,6 @@ namespace ApiService {
         struct Options options
     );
 
-}
+}}
 
 #endif // BLADE_SERVICE_API_H_

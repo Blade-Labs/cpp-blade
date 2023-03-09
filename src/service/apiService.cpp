@@ -1,6 +1,7 @@
 #include "../../include/service/apiService.h"
 
 using namespace Hedera;
+namespace BladeSDK {
 namespace ApiService {
     
     namespace net = boost::asio;
@@ -185,7 +186,4 @@ namespace ApiService {
       }
       return "";
     }
-};
-    
-
-
+}}

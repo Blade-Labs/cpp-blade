@@ -1,4 +1,4 @@
-#include "../include/main.h"
+#include "../include/BladeSDK.h"
 
 #include "ECDSAsecp256k1PrivateKey.h"
 #include "ED25519PrivateKey.h"
@@ -34,13 +34,13 @@ namespace BladeSDK {
       if (argc > 1) {
         std::string action = argv[1];
         if (action == "createAccount") {
-          ApiService::AccountData accountData = createAccount(argv[2], argv[3]);
+          AccountData accountData = createAccount(argv[2], argv[3]);
           printAccount(accountData);
         } else if (action == "createAccountBlade") {
-          ApiService::AccountData accountData = createAccountBlade();
+          AccountData accountData = createAccountBlade();
           printAccount(accountData);
         } else if (action == "import") {
-          ApiService::AccountData accountData = importAccount(argv[2]);
+          AccountData accountData = importAccount(argv[2]);
           printAccount(accountData);
         } else if (action == "sign") {
           std::vector<unsigned char> signature = signMessage(argv[2], argv[3]);
@@ -77,7 +77,7 @@ namespace BladeSDK {
     }
   }
 
-  ApiService::AccountData createAccountBlade()
+  AccountData createAccountBlade()
   {
     MnemonicBIP39 seedPhrase = getMnemonic();
     std::unique_ptr<ECDSAsecp256k1PrivateKey> privateKey = getPrivateKey(seedPhrase);
@@ -106,7 +106,7 @@ namespace BladeSDK {
     };
   }
 
-  ApiService::AccountData createAccount(std::string operatorAccountId, std::string operatorPrivateKey)
+  AccountData createAccount(std::string operatorAccountId, std::string operatorPrivateKey)
   {
     MnemonicBIP39 seedPhrase = getMnemonic();
     std::unique_ptr<ECDSAsecp256k1PrivateKey> privateKey = getPrivateKey(seedPhrase);
@@ -129,7 +129,7 @@ namespace BladeSDK {
     };
   }
 
-  ApiService::AccountData importAccount(std::string seedPhrase) {
+  AccountData importAccount(std::string seedPhrase) {
     std::string passphrase = "";
     MnemonicBIP39 mnemonic = MnemonicBIP39::initializeBIP39Mnemonic(seedPhrase);
     std::unique_ptr<ECDSAsecp256k1PrivateKey> privateKey = getPrivateKey(mnemonic);
@@ -203,7 +203,7 @@ namespace BladeSDK {
     return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
   }
 
-  void printAccount(ApiService::AccountData accountData) {
+  void printAccount(AccountData accountData) {
     std::cout << "Account Id: " << accountData.accountId << std::endl;
     std::cout << "SeedPhrase: " << accountData.seedPhrase << std::endl;
     std::cout << "PrivateKey: " << accountData.privateKey << std::endl;
