@@ -65,7 +65,7 @@ endif()
 # where to find our CMake modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 #message(STATUS "CMake module path: ${CMAKE_MODULE_PATH}")
-include(Installing)
+# include(Installing)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE hedera-sdk-cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBRARIES})

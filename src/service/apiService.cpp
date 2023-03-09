@@ -1,7 +1,8 @@
 #include "../../include/service/apiService.h"
 
+using namespace Hedera;
 namespace ApiService {
-    using namespace Hedera;
+    
     namespace net = boost::asio;
     using tcp = boost::asio::ip::tcp;
     namespace http = boost::beast::http;
@@ -9,22 +10,7 @@ namespace ApiService {
 
     std::string apiHost = "rest.prod.bladewallet.io";
     std::string apiPath = "/openapi/v7";
-    
-    struct Options 
-    {
-      std::string apiKey;
-      std::string fingerprint;
-      std::string network;
-      std::string dAppCode;
-    };
 
-    struct AccountData
-    {
-      std::string seedPhrase;
-      std::string publicKey;
-      std::string privateKey;
-      std::string accountId;
-    };
 
     // Helper function to generate the HTTP request
     http::request<http::string_body> make_request(
@@ -158,8 +144,6 @@ namespace ApiService {
 
         return result;
     }
-
-
 
     json createAccount(std::shared_ptr<PublicKey> publicKey,
                       std::string apiHost,

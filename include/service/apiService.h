@@ -1,3 +1,6 @@
+#ifndef BLADE_SERVICE_API_H_
+#define BLADE_SERVICE_API_H_
+
 #define BOOST_NETWORK_ENABLE_HTTPS
 
 #include "ECDSAsecp256k1PrivateKey.h"
@@ -12,8 +15,21 @@ namespace ApiService {
     namespace http = boost::beast::http;
     using json = nlohmann::json;
     
-    struct Options;
-    struct AccountData;
+    struct Options 
+    {
+      std::string apiKey;
+      std::string fingerprint;
+      std::string network;
+      std::string dAppCode;
+    };
+
+    struct AccountData
+    {
+      std::string seedPhrase;
+      std::string publicKey;
+      std::string privateKey;
+      std::string accountId;
+    };
     
     json createAccount(
         std::shared_ptr<PublicKey> publicKey,
@@ -46,3 +62,4 @@ namespace ApiService {
 
 }
 
+#endif // BLADE_SERVICE_API_H_
