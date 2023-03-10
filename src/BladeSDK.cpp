@@ -7,6 +7,7 @@
 #include "AccountCreateTransaction.h"
 #include "TransactionReceipt.h"
 #include "TransactionResponse.h"
+#include "TransactionRecord.h"
 
 #include <iostream>
 #include <string>
@@ -145,25 +146,18 @@ namespace BladeSDK {
 
 
   std::vector<unsigned char> signMessage(std::string message, std::string signerKey) {
-        std::cout << "Message: " << message << std::endl;
-        std::cout << "signerKey: " << signerKey << std::endl;
-        
-        std::unique_ptr<ECDSAsecp256k1PrivateKey> privateKey = ECDSAsecp256k1PrivateKey::fromString(signerKey);
+        // std::shared_ptr<ECDSAsecp256k1PublicKey> publicKey = ECDSAsecp256k1PublicKey::fromString(signerKey);
+        std::unique_ptr<ED25519PrivateKey> privateKey = ED25519PrivateKey::fromString(signerKey);
 
         std::vector<unsigned char> vec(message.begin(), message.end());
-
-        std::cout << "Message data: ";
-        printVec(vec);
-
-        std::string hexString = vectorToHex(vec);
-        std::cout << "Message data (hex): " << hexString << std::endl;
-        // printVec(hexToVector(hexString));
+        // std::string hexString = vectorToHex(vec);
+        // std::cout << "Message data (hex): " << hexString << std::endl;
 
         std::vector<unsigned char> signature = privateKey->sign(vec);
 
-        std::cout << "Signature: ";
-        printVec(signature);
-        std::cout << "Signature (hex): " << vectorToHex(signature) << std::endl;
+        // std::cout << "Signature: ";
+        // printVec(signature);
+        // std::cout << "Signature (hex): " << vectorToHex(signature) << std::endl;
 
 
         // std::shared_ptr<PublicKey> publicKey = ecdsaSecp256k1PrivateKeyMy->getPublicKey();
@@ -181,7 +175,8 @@ namespace BladeSDK {
         std::vector<unsigned char> signature = hexToVector(signatureHex);
         std::vector<unsigned char> vec(message.begin(), message.end());
 
-        std::shared_ptr<ECDSAsecp256k1PublicKey> publicKey = ECDSAsecp256k1PublicKey::fromString(key);
+        // std::shared_ptr<ECDSAsecp256k1PublicKey> publicKey = ECDSAsecp256k1PublicKey::fromString(key);
+        std::shared_ptr<ED25519PublicKey> publicKey = ED25519PublicKey::fromString(key);
 
         // std::cout << "message: " << message << std::endl;
         // std::cout << "signatureHex: " << signatureHex << std::endl;
@@ -191,6 +186,48 @@ namespace BladeSDK {
   }
 
 
+  // TODO response type
+  void transferHbars(std::string accountId, std::string accountPrivateKey, std::string receiverID, double amountHbars) {
+    const AccountId operatorId = AccountId::fromString(accountId);
+    client.setOperator(operatorId, ED25519PrivateKey::fromString(accountPrivateKey));
+    // client.setOperator(operatorId, ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey));
+
+    const auto recipientId = AccountId::fromString(receiverID);
+    const Hbar amount(amountHbars * 100000000, HbarUnit::TINYBAR());
+
+    TransactionResponse txResponse = TransferTransaction()
+                                    .addHbarTransfer(operatorId, amount.negated())
+                                    .addHbarTransfer(recipientId, amount)
+                                    .setTransactionMemo("transfer test")
+                                    .execute(client);
+
+    // TransactionRecord txRecord = txResponse.getRecord(client);
+
+    // std::cout << "Transferred " << amount.toTinybars() / 100000000 << HbarUnit::HBAR().getSymbol() << std::endl;
+  }
+
+  // TODO response type
+  void transferTokens(std::string token_id, std::string account_id, std::string account_private_key, std::string receiver_id, double amount_tokens, bool free_transfer) {
+    const AccountId operatorId = AccountId::fromString(account_id);
+    client.setOperator(operatorId, ED25519PrivateKey::fromString(account_private_key));
+    const TokenId tokenId = TokenId::fromString(token_id);
+    const AccountId recipientId = AccountId::fromString(receiver_id);
+
+    const int64_t amount = 1LL;
+
+    TransactionResponse txResponse = TransferTransaction()
+                                      .addTokenTransfer(tokenId, operatorId, -amount)
+                                      .addTokenTransfer(tokenId, recipientId, amount)
+                                      .execute(client);
+  }
+
+
+
+  ///////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////
 
   MnemonicBIP39 getMnemonic() {
     // TODO implement https://github.com/Blade-Labs/blade-sdk.js/pull/9/files
