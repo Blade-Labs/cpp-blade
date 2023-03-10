@@ -1,10 +1,10 @@
-#include "Client.h"
-#include "Transaction.h"
-#include <boost/beast/core/detail/base64.hpp>
+#include "../../include/service/accountService.h"
 
-namespace AccountService
-{
-	using namespace Hedera;
+using namespace Hedera;
+
+namespace BladeSDK {
+namespace AccountService {
+	
   
   std::vector<unsigned char> base64ToVector(std::string encoded) {
     std::string decoded;
@@ -42,4 +42,4 @@ namespace AccountService
 
     return 0;
   }
-}
+}}

@@ -1,3 +1,6 @@
+#ifndef BLADE_SERVICE_API_H_
+#define BLADE_SERVICE_API_H_
+
 #define BOOST_NETWORK_ENABLE_HTTPS
 
 #include "ECDSAsecp256k1PrivateKey.h"
@@ -5,12 +8,23 @@
 #include <boost/beast.hpp>
 #include <boost/beast/ssl.hpp>
 #include <nlohmann/json.hpp>
-#include "apiService.cpp"
 
-namespace ApiService
-{
-//     struct Options;
-//     struct AccountData;
+using namespace Hedera;
+
+namespace BladeSDK {
+namespace ApiService {
+    namespace http = boost::beast::http;
+    using json = nlohmann::json;
+    
+    struct Options 
+    {
+      std::string apiKey;
+      std::string fingerprint;
+      std::string network;
+      std::string dAppCode;
+    };
+
+
     
     json createAccount(
         std::shared_ptr<PublicKey> publicKey,
@@ -41,5 +55,6 @@ namespace ApiService
         struct Options options
     );
 
-}
+}}
 
+#endif // BLADE_SERVICE_API_H_
