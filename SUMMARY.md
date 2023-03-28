@@ -1,8 +1,7 @@
 # Table of contents
 
-* [Cpp Blade SDK](README.md)
-* [Introduction](introduction.md)
+* [Introduction](README.md)
 * [Setting Up](setting-up.md)
-* [Test Case](test-case.md)
+* [Build](build.md)
 * [Usage](usage.md)
 * [License](license.md)
