@@ -2,7 +2,7 @@
 
 * [Cpp Blade SDK](README.md)
 * [Introduction](introduction.md)
-* [Getting Started](getting-started.md)
+* [Setting Up](setting-up.md)
 * [Test Case](test-case.md)
 * [Usage](usage.md)
 * [License](license.md)
