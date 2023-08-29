@@ -102,33 +102,33 @@ namespace BladeSDK {
     return {
       .seedPhrase = seedPhrase.toString(),
       .publicKey = account.value("publicKey", ""),
-      .privateKey = privateKey->toString(),
+      .privateKey = privateKey->toStringDer(),
       .accountId = account.value("id", ""),
     };
   }
 
-  AccountData createAccount(std::string operatorAccountId, std::string operatorPrivateKey)
-  {
-    MnemonicBIP39 seedPhrase = getMnemonic();
-    std::unique_ptr<ECDSAsecp256k1PrivateKey> privateKey = getPrivateKey(seedPhrase);
-    std::shared_ptr<PublicKey> publicKey = privateKey->getPublicKey();
+  // AccountData createAccount(std::string operatorAccountId, std::string operatorPrivateKey)
+  // {
+  //   MnemonicBIP39 seedPhrase = getMnemonic();
+  //   std::unique_ptr<ECDSAsecp256k1PrivateKey> privateKey = getPrivateKey(seedPhrase);
+  //   std::shared_ptr<PublicKey> publicKey = privateKey->getPublicKey();
     
-    client.setOperator(AccountId::fromString(operatorAccountId), ED25519PrivateKey::fromString(operatorPrivateKey));
+  //   client.setOperator(AccountId::fromString(operatorAccountId), ED25519PrivateKey::fromString(operatorPrivateKey));
 
-    TransactionResponse txResp = AccountCreateTransaction()
-        .setKey(publicKey)
-        // .setInitialBalance(Hbar(1000ULL, HbarUnit::TINYBAR()))
-        .execute(client);
+  //   TransactionResponse txResp = AccountCreateTransaction()
+  //       .setKey(publicKey)
+  //       // .setInitialBalance(Hbar(1000ULL, HbarUnit::TINYBAR()))
+  //       .execute(client);
 
-    TransactionReceipt txReceipt = txResp.getReceipt(client);
+  //   TransactionReceipt txReceipt = txResp.getReceipt(client);
     
-    return {
-      .seedPhrase = seedPhrase.toString(),
-      .publicKey = publicKey->toString(),
-      .privateKey = privateKey->toString(),
-      .accountId = txReceipt.getAccountId().value().toString(),
-    };
-  }
+  //   return {
+  //     .seedPhrase = seedPhrase.toString(),
+  //     .publicKey = publicKey->toStringDer(),
+  //     .privateKey = privateKey->toStringDer(),
+  //     .accountId = txReceipt.mAccountId.value().toString(),
+  //   };
+  // }
 
   AccountData importAccount(std::string seedPhrase) {
     std::string passphrase = "";
@@ -138,88 +138,88 @@ namespace BladeSDK {
     
     return {
       .seedPhrase = mnemonic.toString(),
-      .publicKey = privateKey->getPublicKey()->toString(),
-      .privateKey = privateKey->toString(),
+      .publicKey = privateKey->getPublicKey()->toStringDer(),
+      .privateKey = privateKey->toStringDer(),
       .accountId = accountId,
     };
   }
 
 
-  std::vector<unsigned char> signMessage(std::string message, std::string signerKey) {
-        // std::shared_ptr<ECDSAsecp256k1PublicKey> publicKey = ECDSAsecp256k1PublicKey::fromString(signerKey);
-        std::unique_ptr<ED25519PrivateKey> privateKey = ED25519PrivateKey::fromString(signerKey);
+  // std::vector<unsigned char> signMessage(std::string message, std::string signerKey) {
+  //       // std::shared_ptr<ECDSAsecp256k1PublicKey> publicKey = ECDSAsecp256k1PublicKey::fromString(signerKey);
+  //       std::unique_ptr<ED25519PrivateKey> privateKey = ED25519PrivateKey::fromString(signerKey);
 
-        std::vector<unsigned char> vec(message.begin(), message.end());
-        // std::string hexString = vectorToHex(vec);
-        // std::cout << "Message data (hex): " << hexString << std::endl;
+  //       std::vector<unsigned char> vec(message.begin(), message.end());
+  //       // std::string hexString = vectorToHex(vec);
+  //       // std::cout << "Message data (hex): " << hexString << std::endl;
 
-        std::vector<unsigned char> signature = privateKey->sign(vec);
+  //       std::vector<unsigned char> signature = privateKey->sign(vec);
 
-        // std::cout << "Signature: ";
-        // printVec(signature);
-        // std::cout << "Signature (hex): " << vectorToHex(signature) << std::endl;
+  //       // std::cout << "Signature: ";
+  //       // printVec(signature);
+  //       // std::cout << "Signature (hex): " << vectorToHex(signature) << std::endl;
 
 
-        // std::shared_ptr<PublicKey> publicKey = ecdsaSecp256k1PrivateKeyMy->getPublicKey();
+  //       // std::shared_ptr<PublicKey> publicKey = ecdsaSecp256k1PrivateKeyMy->getPublicKey();
         
-        // std::cout << "Verify sig1: " << ecdsaSecp256k1PrivateKeyMy->getPublicKey()->verifySignature(signature1, vec)
-        //           << std::endl;
-        // std::cout << "Verify sig2: " << ecdsaFromString->getPublicKey()->verifySignature(signature2, vec)
-        //           << std::endl;
-        return signature;
-  }
+  //       // std::cout << "Verify sig1: " << ecdsaSecp256k1PrivateKeyMy->getPublicKey()->verifySignature(signature1, vec)
+  //       //           << std::endl;
+  //       // std::cout << "Verify sig2: " << ecdsaFromString->getPublicKey()->verifySignature(signature2, vec)
+  //       //           << std::endl;
+  //       return signature;
+  // }
 
 
-  bool verifyMessage(std::string message, std::string signatureHex, std::string key) {
+  // bool verifyMessage(std::string message, std::string signatureHex, std::string key) {
     
-        std::vector<unsigned char> signature = hexToVector(signatureHex);
-        std::vector<unsigned char> vec(message.begin(), message.end());
+  //       std::vector<unsigned char> signature = hexToVector(signatureHex);
+  //       std::vector<unsigned char> vec(message.begin(), message.end());
 
-        // std::shared_ptr<ECDSAsecp256k1PublicKey> publicKey = ECDSAsecp256k1PublicKey::fromString(key);
-        std::shared_ptr<ED25519PublicKey> publicKey = ED25519PublicKey::fromString(key);
+  //       // std::shared_ptr<ECDSAsecp256k1PublicKey> publicKey = ECDSAsecp256k1PublicKey::fromString(key);
+  //       std::shared_ptr<ED25519PublicKey> publicKey = ED25519PublicKey::fromString(key);
 
-        // std::cout << "message: " << message << std::endl;
-        // std::cout << "signatureHex: " << signatureHex << std::endl;
-        // std::cout << "publicKey: " << publicKey->toString() << std::endl;
+  //       // std::cout << "message: " << message << std::endl;
+  //       // std::cout << "signatureHex: " << signatureHex << std::endl;
+  //       // std::cout << "publicKey: " << publicKey->toString() << std::endl;
 
-        return publicKey->verifySignature(signature, vec);
-  }
+  //       return publicKey->verifySignature(signature, vec);
+  // }
 
 
-  // TODO response type
-  void transferHbars(std::string accountId, std::string accountPrivateKey, std::string receiverID, double amountHbars) {
-    const AccountId operatorId = AccountId::fromString(accountId);
-    client.setOperator(operatorId, ED25519PrivateKey::fromString(accountPrivateKey));
-    // client.setOperator(operatorId, ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey));
+  // // TODO response type
+  // void transferHbars(std::string accountId, std::string accountPrivateKey, std::string receiverID, double amountHbars) {
+  //   const AccountId operatorId = AccountId::fromString(accountId);
+  //   client.setOperator(operatorId, ED25519PrivateKey::fromString(accountPrivateKey));
+  //   // client.setOperator(operatorId, ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey));
 
-    const auto recipientId = AccountId::fromString(receiverID);
-    const Hbar amount(amountHbars * 100000000, HbarUnit::TINYBAR());
+  //   const auto recipientId = AccountId::fromString(receiverID);
+  //   const Hbar amount(amountHbars * 100000000, HbarUnit::TINYBAR());
 
-    TransactionResponse txResponse = TransferTransaction()
-                                    .addHbarTransfer(operatorId, amount.negated())
-                                    .addHbarTransfer(recipientId, amount)
-                                    .setTransactionMemo("transfer test")
-                                    .execute(client);
+  //   TransactionResponse txResponse = TransferTransaction()
+  //                                   .addHbarTransfer(operatorId, amount.negated())
+  //                                   .addHbarTransfer(recipientId, amount)
+  //                                   .setTransactionMemo("transfer test")
+  //                                   .execute(client);
 
-    // TransactionRecord txRecord = txResponse.getRecord(client);
+  //   // TransactionRecord txRecord = txResponse.getRecord(client);
 
-    // std::cout << "Transferred " << amount.toTinybars() / 100000000 << HbarUnit::HBAR().getSymbol() << std::endl;
-  }
+  //   // std::cout << "Transferred " << amount.toTinybars() / 100000000 << HbarUnit::HBAR().getSymbol() << std::endl;
+  // }
 
-  // TODO response type
-  void transferTokens(std::string token_id, std::string account_id, std::string account_private_key, std::string receiver_id, double amount_tokens, bool free_transfer) {
-    const AccountId operatorId = AccountId::fromString(account_id);
-    client.setOperator(operatorId, ED25519PrivateKey::fromString(account_private_key));
-    const TokenId tokenId = TokenId::fromString(token_id);
-    const AccountId recipientId = AccountId::fromString(receiver_id);
+  // // TODO response type
+  // void transferTokens(std::string token_id, std::string account_id, std::string account_private_key, std::string receiver_id, double amount_tokens, bool free_transfer) {
+  //   const AccountId operatorId = AccountId::fromString(account_id);
+  //   client.setOperator(operatorId, ED25519PrivateKey::fromString(account_private_key));
+  //   const TokenId tokenId = TokenId::fromString(token_id);
+  //   const AccountId recipientId = AccountId::fromString(receiver_id);
 
-    const int64_t amount = 1LL;
+  //   const int64_t amount = 1LL;
 
-    TransactionResponse txResponse = TransferTransaction()
-                                      .addTokenTransfer(tokenId, operatorId, -amount)
-                                      .addTokenTransfer(tokenId, recipientId, amount)
-                                      .execute(client);
-  }
+  //   TransactionResponse txResponse = TransferTransaction()
+  //                                     .addTokenTransfer(tokenId, operatorId, -amount)
+  //                                     .addTokenTransfer(tokenId, recipientId, amount)
+  //                                     .execute(client);
+  // }
 
 
 
@@ -236,9 +236,9 @@ namespace BladeSDK {
     return seedPhrase;
   }
 
-  std::unique_ptr<ECDSAsecp256k1PrivateKey> getPrivateKey(MnemonicBIP39 mnemonic) {
-    return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
-  }
+  // std::unique_ptr<ECDSAsecp256k1PrivateKey> getPrivateKey(MnemonicBIP39 mnemonic) {
+  //   return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
+  // }
 
   void printAccount(AccountData accountData) {
     std::cout << "Account Id: " << accountData.accountId << std::endl;

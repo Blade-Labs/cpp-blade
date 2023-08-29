@@ -157,7 +157,7 @@ namespace ApiService {
           .apiKey = apiKey, .fingerprint = fingerprint, .network = network, .dAppCode = dAppCode 
         };
         json body = {
-          {"publicKey", "302d300706052b8104000a032200" + publicKey->toString()}
+          {"publicKey", publicKey->toStringDer()}
         };
         json result = makeRequestPost(apiHost, apiPath + "/accounts", body.dump(), options);
 
@@ -174,7 +174,7 @@ namespace ApiService {
         apiHost = "mainnet-public.mirrornode.hedera.com";
       }
 
-      std::string apiPath = "/api/v1/accounts?account.publickey=" + publicKey->toString();
+      std::string apiPath = "/api/v1/accounts?account.publickey=" + publicKey->toStringDer();
       json resoponse = makeRequestGet(apiHost, apiPath);
           
 
