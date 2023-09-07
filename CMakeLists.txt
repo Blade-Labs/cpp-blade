@@ -4,12 +4,13 @@ project(blade-cpp VERSION 0.0.1 DESCRIPTION "Blade SDK C++" LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(Protobuf_USE_STATIC_LIBS ON)
 
 include(FetchContent)
 FetchContent_Declare(
         hedera-sdk-cpp
-	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.14.0/hedera-sdk-cpp-v0.14.0-0e17f923.tar.gz
-        URL_HASH SHA256=f40b564c70c9d69061b7235862c6ce1ade683d5cb682654b8e923de33a1ba91c
+	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.15.0/hedera-sdk-cpp-v0.15.0-8ef1414d.tar.gz
+        URL_HASH SHA256=e2aa8305c6c0559a2dd05a64075c891797e86939b84f022f7f0c7ffa84d21d8b
 )
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(hedera-sdk-cpp)
@@ -31,11 +32,17 @@ find_package(OpenSSL REQUIRED)
 find_package(Boost REQUIRED)
 
 
+
+
+
+add_executable(blade-cpp src/BladeSDK.cpp)
+
+target_link_directories(blade-cpp PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib)
+target_link_libraries(blade-cpp PRIVATE hedera-sdk-cpp)
+
 include_directories(${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/include)
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/sdk/main/include)
-# add_executable(${PROJECT_NAME} src/BladeSDK.cpp)
-add_library(${PROJECT_NAME} STATIC)
 target_sources(${PROJECT_NAME}
     PRIVATE
         src/BladeSDK.cpp
@@ -69,9 +76,11 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE hedera-sdk-cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_ROOT}/lib)
+# target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_ROOT}/lib)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE dl)
+
+target_sources(blade-cpp PRIVATE "src")
 
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OSX_CORE_FOUNDATION})
@@ -198,3 +207,5 @@ install(TARGETS ${PROJECT_NAME}
 # file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/addressbook/mainnet.pb DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 # file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/wordlists/bip39-english.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 # file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/wordlists/legacy-english.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
+
+install(TARGETS blade-cpp DESTINATION bin)
