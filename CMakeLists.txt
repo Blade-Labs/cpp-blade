@@ -28,7 +28,6 @@ find_package(absl CONFIG REQUIRED)
 find_package(upb CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(OpenSSL REQUIRED)
 find_package(Boost REQUIRED)
 
 
@@ -38,9 +37,8 @@ find_package(Boost REQUIRED)
 add_executable(blade-cpp src/BladeSDK.cpp)
 
 
-include_directories(${OPENSSL_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS}/boost)
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/include)
-include_directories(${hedera-sdk-cpp_SOURCE_DIR}/sdk/main/include)
 target_sources(${PROJECT_NAME}
     PRIVATE
         src/BladeSDK.cpp

@@ -13,7 +13,10 @@ using namespace Hedera;
 
 namespace BladeSDK {
 namespace ApiService {
-    namespace http = boost::beast::http;
+    namespace beast = boost::beast;
+    namespace http = beast::http;
+    namespace net = boost::asio;
+    namespace ssl = net::ssl;
     using json = nlohmann::json;
     
     struct Options 
@@ -23,8 +26,6 @@ namespace ApiService {
       std::string network;
       std::string dAppCode;
     };
-
-
     
     json createAccount(
         std::shared_ptr<PublicKey> publicKey,
@@ -34,6 +35,9 @@ namespace ApiService {
         std::string dAppCode,
         std::string network
     );
+
+    std::string getFingerprintApiKey();
+    void performHttpsGetRequest(const std::string& host, const std::string& target);
 
     std::string getAccountsFromPublicKey(
         std::shared_ptr<PublicKey> publicKey,

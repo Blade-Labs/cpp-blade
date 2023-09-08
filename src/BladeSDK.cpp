@@ -46,6 +46,10 @@ int main(int argc, char** argv) {
     } else if (action == "import") {
       BladeSDK::AccountData accountData = BladeSDK::importAccount(argv[2]);
       printAccount(accountData);
+    } else if (action == "fpApiKey") {
+      std::string fingerprint = BladeSDK::getFingerprintApiKey();
+      std::cout << "Fingerprint: " << fingerprint << std::endl;
+    
     // } else if (action == "sign") {
     //   std::vector<unsigned char> signature = signMessage(argv[2], argv[3]);
     // } else if (action == "verify") {
@@ -82,6 +86,10 @@ namespace BladeSDK {
       std::cerr << "Unknown network. Use TESTNET or MAINNET" << std::endl;
       throw;
     }
+  }
+
+  std::string getFingerprintApiKey() {
+    return ApiService::getFingerprintApiKey();
   }
 
   AccountData createAccountBlade()

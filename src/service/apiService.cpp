@@ -3,15 +3,15 @@
 using namespace Hedera;
 namespace BladeSDK {
 namespace ApiService {
-    
-    namespace net = boost::asio;
     using tcp = boost::asio::ip::tcp;
-    namespace http = boost::beast::http;
     using json = nlohmann::json;
+    namespace beast = boost::beast;
+    namespace http = beast::http;
+    namespace net = boost::asio;
+    namespace ssl = boost::asio::ssl;
 
     std::string apiHost = "rest.prod.bladewallet.io";
     std::string apiPath = "/openapi/v7";
-
 
     // Helper function to generate the HTTP request
     http::request<http::string_body> make_request(
@@ -49,84 +49,73 @@ namespace ApiService {
     }
 
 
-    json makeRequestPost(std::string apiHost, std::string path, std::string body, struct Options options)
-        {
-          std::cout << apiHost << std::endl;
-          std::cout << path << std::endl;
-          std::cout << body << std::endl;
-          std::cout << options.apiKey << std::endl;
-          std::cout << options.fingerprint << std::endl;
-          std::cout << options.network << std::endl;
-          std::cout << options.dAppCode << std::endl;
-          
-        net::io_context ioc;
+    json makeRequestPost(std::string apiHost, std::string path, std::string body, struct Options options) {
+        try {
+            net::io_context ioc;
+            // Create the SSL context and configure it
+            ssl::context ctx(ssl::context::sslv23_client);
 
-        // Create the SSL context and configure it
-        boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
-        ctx.set_default_verify_paths();
-        ctx.set_verify_mode(boost::asio::ssl::verify_peer);
+            ctx.set_default_verify_paths();
+            // ctx.set_verify_mode(boost::asio::ssl::verify_peer);
 
-        // Create the SSL stream and connect to the server
-        boost::asio::ssl::stream<tcp::socket> stream(ioc, ctx);
-        tcp::resolver resolver(ioc);
+            // Create the SSL stream and connect to the server
+            ssl::stream<tcp::socket> stream(ioc, ctx);
+            tcp::resolver resolver(ioc);
 
-        auto const results = resolver.resolve(apiHost, "443");
+            if (!SSL_set_tlsext_host_name(stream.native_handle(), apiHost.c_str())) {
+                boost::system::error_code ec{static_cast<int>(::ERR_get_error()), net::error::get_ssl_category()};
+                throw boost::system::system_error{ec};
+            }
+            auto results = resolver.resolve(apiHost, "https");
+            net::connect(stream.next_layer(), results.begin(), results.end());
+            stream.handshake(ssl::stream_base::client);
 
-        net::connect(stream.next_layer(), results.begin(), results.end());
-        stream.handshake(boost::asio::ssl::stream_base::client);
+            // Make the HTTP request
+            http::request<http::string_body> req = make_request(apiHost, path, body, options);
+            http::write(stream, req);
 
+            // Receive the HTTP response
+            boost::beast::flat_buffer buffer;
+            http::response<http::dynamic_body> res;
+            http::read(stream, buffer, res);
 
-        // Make the HTTP request
-        http::request<http::string_body> req = make_request(apiHost, path, body, options);
-        http::write(stream, req);
+            //std::cout << "HTTP response: " << res.result_int() << std::endl;
+            //std::cout << "HTTP message: " << res << std::endl;
 
-        // Receive the HTTP response
-        boost::beast::flat_buffer buffer;
-        http::response<http::dynamic_body> res;
-        http::read(stream, buffer, res);
+            if (res.result_int() != 200)
+            {
+              std::cout << "HTTP response: " << res.result_int() << std::endl;
+              std::cout << "HTTP message: " << res << std::endl;
+              throw;
+            }
 
-        //std::cout << "HTTP response: " << res.result_int() << std::endl;
-        //std::cout << "HTTP message: " << res << std::endl;
-
-        if (res.result_int() != 200)
-        {
-          std::cout << "HTTP response: " << res.result_int() << std::endl;
-          std::cout << "HTTP message: " << res << std::endl;
-          throw;
+            json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
+            return result;
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+            throw e;
         }
-
-
-
-        //  json account = json::parse(res);
-        json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
-        // json result = nlohmann::json::parse("{}");
-
-        //std::cout << result.dump(4) << std::endl;
-
-
-        return result;
-        //return boost::beast::buffers_to_string(res.body().data());
     }
 
 
-    json makeRequestGet(std::string apiHost, std::string path)
-        {
+    json makeRequestGet(std::string apiHost, std::string path) {
         net::io_context ioc;
-
-        // Create the SSL context and configure it
-        boost::asio::ssl::context ctx(boost::asio::ssl::context::sslv23);
+        ssl::context ctx(ssl::context::sslv23_client);
         ctx.set_default_verify_paths();
-        ctx.set_verify_mode(boost::asio::ssl::verify_peer);
 
         // Create the SSL stream and connect to the server
-        boost::asio::ssl::stream<tcp::socket> stream(ioc, ctx);
+        ssl::stream<tcp::socket> stream(ioc, ctx);
         tcp::resolver resolver(ioc);
 
-        auto const results = resolver.resolve(apiHost, "443");
+        if (!SSL_set_tlsext_host_name(stream.native_handle(), apiHost.c_str())) {
+            boost::system::error_code ec{static_cast<int>(::ERR_get_error()), net::error::get_ssl_category()};
+            throw boost::system::system_error{ec};
+        }
 
+        auto results = resolver.resolve(apiHost, "https");
         net::connect(stream.next_layer(), results.begin(), results.end());
-        stream.handshake(boost::asio::ssl::stream_base::client);
 
+        stream.handshake(ssl::stream_base::client);
 
         // Make the HTTP request
         http::request<http::string_body> req = make_request_get(apiHost, path);
@@ -137,9 +126,6 @@ namespace ApiService {
         http::response<http::dynamic_body> res;
         http::read(stream, buffer, res);
 
-        //std::cout << "HTTP response: " << res.result_int() << std::endl;
-        //std::cout << "HTTP message: " << res << std::endl;
-
         if (res.result_int() != 200)
         {
           std::cout << "HTTP response: " << res.result_int() << std::endl;
@@ -148,9 +134,6 @@ namespace ApiService {
         }
 
         json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
-
-        // std::cout << result.dump(4) << std::endl;
-
         return result;
     }
 
@@ -172,6 +155,14 @@ namespace ApiService {
         //std::cout << "ApiService::JSON RAW: " << result.dump(10) << std::endl;
 
         return result;
+    }
+
+    std::string getFingerprintApiKey() {
+      std::cout << apiHost << apiPath + "/sdk/config" << std::endl;
+
+
+      json resoponse = makeRequestGet("rest.prod.bladewallet.io", "/openapi/v7/sdk/config");
+      return resoponse.value("fpAp11iKey", "default api keys fallabck");
     }
 
     std::string getAccountsFromPublicKey(std::shared_ptr<PublicKey> publicKey, std::string network) {

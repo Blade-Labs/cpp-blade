@@ -27,6 +27,8 @@ namespace BladeSDK {
     // void transferHbars(std::string accountId, std::string accountPrivateKey, std::string receiverID, double amount);
     // void transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverID, double amount, bool freeTransfer);
 
+    std::string getFingerprintApiKey();
+
     MnemonicBIP39 getMnemonic();
     std::unique_ptr<PrivateKey> getPrivateKey(MnemonicBIP39);
     void printAccount(AccountData);
