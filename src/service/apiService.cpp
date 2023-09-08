@@ -51,6 +51,14 @@ namespace ApiService {
 
     json makeRequestPost(std::string apiHost, std::string path, std::string body, struct Options options)
         {
+          std::cout << apiHost << std::endl;
+          std::cout << path << std::endl;
+          std::cout << body << std::endl;
+          std::cout << options.apiKey << std::endl;
+          std::cout << options.fingerprint << std::endl;
+          std::cout << options.network << std::endl;
+          std::cout << options.dAppCode << std::endl;
+          
         net::io_context ioc;
 
         // Create the SSL context and configure it

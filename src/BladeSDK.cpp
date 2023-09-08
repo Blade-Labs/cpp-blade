@@ -3,6 +3,9 @@
 #include "ECDSAsecp256k1PrivateKey.h"
 #include "ED25519PrivateKey.h"
 #include "MnemonicBIP39.h"
+
+
+
 #include "Client.h"
 #include "AccountCreateTransaction.h"
 #include "TransactionReceipt.h"
@@ -26,36 +29,39 @@ Client client;
 
 using namespace Hedera;
 
-namespace BladeSDK {
 
-  int main(int argc, char** argv)
-  {
-      init("api-key", "TESTNET", "dAppCode", "6C9781BF-6B49-4182-B584-08F5EF28B224");
+int main(int argc, char** argv) {
+  std::cout << "Blade-SDK inside namespace:" << std::endl;
+  BladeSDK::init("api-key", "TESTNET", "dAppCode", "6C9781BF-6B49-4182-B584-08F5EF28B224");
 
-      if (argc > 1) {
-        std::string action = argv[1];
-        if (action == "createAccount") {
-          AccountData accountData = createAccount(argv[2], argv[3]);
-          printAccount(accountData);
-        } else if (action == "createAccountBlade") {
-          AccountData accountData = createAccountBlade();
-          printAccount(accountData);
-        } else if (action == "import") {
-          AccountData accountData = importAccount(argv[2]);
-          printAccount(accountData);
-        } else if (action == "sign") {
-          std::vector<unsigned char> signature = signMessage(argv[2], argv[3]);
-        } else if (action == "verify") {
-          bool valid = verifyMessage(argv[2], argv[3], argv[4]);
-          std::cout << "Valid signature: " << std::to_string(valid) << std::endl;
-        } else {
-          std::cout << "Unknown action: '" << argv[1] << "'" <<  std::endl;
-        }
-      } else {
-        std::cout << "Blade-SDK CPP Demo. Checkout README.md for examples:" << std::endl;
-      }
-      return 0;   
+  if (argc > 1) {
+    std::string action = argv[1];
+    // if (action == "createAccount") {
+    //   AccountData accountData = createAccount(argv[2], argv[3]);
+    //   printAccount(accountData);
+    // } else 
+    if (action == "createAccountBlade") {
+      BladeSDK::AccountData accountData = BladeSDK::createAccountBlade();
+      printAccount(accountData);
+    } else if (action == "import") {
+      BladeSDK::AccountData accountData = BladeSDK::importAccount(argv[2]);
+      printAccount(accountData);
+    // } else if (action == "sign") {
+    //   std::vector<unsigned char> signature = signMessage(argv[2], argv[3]);
+    // } else if (action == "verify") {
+    //   bool valid = verifyMessage(argv[2], argv[3], argv[4]);
+    //   std::cout << "Valid signature: " << std::to_string(valid) << std::endl;
+    } else {
+      std::cout << "Unknown action: '" << argv[1] << "'" <<  std::endl;
+    }
+  } else {
+    std::cout << "Blade-SDK CPP Demo. Checkout README.md for examples:" << std::endl;
   }
+  return 0;  
+
+}
+
+namespace BladeSDK {
 
   void init(std::string apiKey_, std::string network_, std::string dAppCode_, std::string fingerprint_) {
     apiKey = apiKey_;
@@ -81,7 +87,7 @@ namespace BladeSDK {
   AccountData createAccountBlade()
   {
     MnemonicBIP39 seedPhrase = getMnemonic();
-    std::unique_ptr<ECDSAsecp256k1PrivateKey> privateKey = getPrivateKey(seedPhrase);
+    std::unique_ptr<PrivateKey> privateKey = getPrivateKey(seedPhrase);
     std::shared_ptr<PublicKey> publicKey = privateKey->getPublicKey(); 
 
     json account = ApiService::createAccount(publicKey, apiHost, apiKey, fingerprint, dAppCode, network);
@@ -133,7 +139,7 @@ namespace BladeSDK {
   AccountData importAccount(std::string seedPhrase) {
     std::string passphrase = "";
     MnemonicBIP39 mnemonic = MnemonicBIP39::initializeBIP39Mnemonic(seedPhrase);
-    std::unique_ptr<ECDSAsecp256k1PrivateKey> privateKey = getPrivateKey(mnemonic);
+    std::unique_ptr<PrivateKey> privateKey = getPrivateKey(mnemonic);
     std::string accountId = ApiService::getAccountsFromPublicKey(privateKey->getPublicKey(), network);
     
     return {
@@ -236,9 +242,10 @@ namespace BladeSDK {
     return seedPhrase;
   }
 
-  // std::unique_ptr<ECDSAsecp256k1PrivateKey> getPrivateKey(MnemonicBIP39 mnemonic) {
-  //   return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
-  // }
+  std::unique_ptr<PrivateKey> getPrivateKey(MnemonicBIP39 mnemonic) {
+    return mnemonic.toStandardECDSAsecp256k1PrivateKey();
+    // return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
+  }
 
   void printAccount(AccountData accountData) {
     std::cout << "Account Id: " << accountData.accountId << std::endl;

@@ -16,7 +16,7 @@ namespace AccountService {
 
 	int executeUpdateAccountTransactions(
         Client* client, 
-        std::unique_ptr < ECDSAsecp256k1PrivateKey> &privateKey,
+        std::unique_ptr<PrivateKey> &privateKey,
         std::string updateAccountTransactionBytes,
         std::string transactionBytes
   ) {
