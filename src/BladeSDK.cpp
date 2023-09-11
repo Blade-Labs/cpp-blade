@@ -31,69 +31,69 @@ Client client;
 using namespace Hedera;
 
 
-int main(int argc, char** argv) {
-  std::cout << "Blade-SDK inside namespace:" << std::endl;
+// int main(int argc, char** argv) {
+//   std::cout << "Blade-SDK inside namespace:" << std::endl;
 
-  BladeSDK::init("ygUgCzRrsvhWmb3dsLcDpGnJpSZ4tk8hACmZqg9WngpuQYKdnD5m8FjfPV3XVUeB", "TESTNET", "unitysdktest", "O9LAocV5ISChRrBCtvpY");
-  // std::cout << "createAccountBlade(): " <<  std::endl;
-  // BladeSDK::AccountData accountData = BladeSDK::createAccountBlade();
+//   BladeSDK::init("ygUgCzRrsvhWmb3dsLcDpGnJpSZ4tk8hACmZqg9WngpuQYKdnD5m8FjfPV3XVUeB", "TESTNET", "unitysdktest", "O9LAocV5ISChRrBCtvpY");
+//   // std::cout << "createAccountBlade(): " <<  std::endl;
+//   // BladeSDK::AccountData accountData = BladeSDK::createAccountBlade();
   
-  std::cout << "SecurityService::encrypt(): " << BladeSDK::SecurityService::encrypt("O9LAocV5ISChRrBCtvpY", "ygUgCzRrsvhWmb3dsLcDpGnJpSZ4tk8hACmZqg9WngpuQYKdnD5m8FjfPV3XVUeB") <<  std::endl;
-  // std::cout << "expected: MDAwMDAwMDAwMDAw1DMp/gSyfTBo5CYe+6CwQQU1wN0Mdu1mPkhy8YU/64SVaerk" <<  std::endl;
-  // std::cout << "expected: MDAwMDAwMDAwMDAw1DMp/gSyfTBo5CYe+6CwQQU1wN0=" <<  std::endl;
+//   std::cout << "SecurityService::encrypt(): " << BladeSDK::SecurityService::encrypt("O9LAocV5ISChRrBCtvpY", "ygUgCzRrsvhWmb3dsLcDpGnJpSZ4tk8hACmZqg9WngpuQYKdnD5m8FjfPV3XVUeB") <<  std::endl;
+//   // std::cout << "expected: MDAwMDAwMDAwMDAw1DMp/gSyfTBo5CYe+6CwQQU1wN0Mdu1mPkhy8YU/64SVaerk" <<  std::endl;
+//   // std::cout << "expected: MDAwMDAwMDAwMDAw1DMp/gSyfTBo5CYe+6CwQQU1wN0=" <<  std::endl;
   
 
 
-  // if (argc > 1) {
-  //   std::string action = argv[1];
-  //   // if (action == "createAccount") {
-  //   //   AccountData accountData = createAccount(argv[2], argv[3]);
-  //   //   printAccount(accountData);
-  //   // } else 
-  //   if (action == "createAccountBlade") {
-  //     BladeSDK::AccountData accountData = BladeSDK::createAccountBlade();
-  //     printAccount(accountData);
-  //   } else if (action == "import") {
-  //     BladeSDK::AccountData accountData = BladeSDK::importAccount(argv[2]);
-  //     printAccount(accountData);
-  //   } else if (action == "fpApiKey") {
-  //     std::string fingerprint = BladeSDK::getFingerprintApiKey();
-  //     std::cout << "Fingerprint: " << fingerprint << std::endl;
+//   // if (argc > 1) {
+//   //   std::string action = argv[1];
+//   //   // if (action == "createAccount") {
+//   //   //   AccountData accountData = createAccount(argv[2], argv[3]);
+//   //   //   printAccount(accountData);
+//   //   // } else 
+//   //   if (action == "createAccountBlade") {
+//   //     BladeSDK::AccountData accountData = BladeSDK::createAccountBlade();
+//   //     printAccount(accountData);
+//   //   } else if (action == "import") {
+//   //     BladeSDK::AccountData accountData = BladeSDK::importAccount(argv[2]);
+//   //     printAccount(accountData);
+//   //   } else if (action == "fpApiKey") {
+//   //     std::string fingerprint = BladeSDK::getFingerprintApiKey();
+//   //     std::cout << "Fingerprint: " << fingerprint << std::endl;
     
-  //   // } else if (action == "sign") {
-  //   //   std::vector<unsigned char> signature = signMessage(argv[2], argv[3]);
-  //   // } else if (action == "verify") {
-  //   //   bool valid = verifyMessage(argv[2], argv[3], argv[4]);
-  //   //   std::cout << "Valid signature: " << std::to_string(valid) << std::endl;
-  //   } else {
-  //     std::cout << "Unknown action: '" << argv[1] << "'" <<  std::endl;
-  //   }
-  // } else {
-  //   std::cout << "Blade-SDK CPP Demo. Checkout README.md for examples:" << std::endl;
-  // }
+//   //   // } else if (action == "sign") {
+//   //   //   std::vector<unsigned char> signature = signMessage(argv[2], argv[3]);
+//   //   // } else if (action == "verify") {
+//   //   //   bool valid = verifyMessage(argv[2], argv[3], argv[4]);
+//   //   //   std::cout << "Valid signature: " << std::to_string(valid) << std::endl;
+//   //   } else {
+//   //     std::cout << "Unknown action: '" << argv[1] << "'" <<  std::endl;
+//   //   }
+//   // } else {
+//   //   std::cout << "Blade-SDK CPP Demo. Checkout README.md for examples:" << std::endl;
+//   // }
 
 
-    // hash deviceId sha256
-    // std::string input = "550e8400-e29b-41d4-a716-446655440000";
+//     // hash deviceId sha256
+//     // std::string input = "550e8400-e29b-41d4-a716-446655440000";
 
-    // unsigned char hash[SHA256_DIGEST_LENGTH];
-    // SHA256_CTX sha256;
-    // SHA256_Init(&sha256);
-    // SHA256_Update(&sha256, input.c_str(), input.size());
-    // SHA256_Final(hash, &sha256);
+//     // unsigned char hash[SHA256_DIGEST_LENGTH];
+//     // SHA256_CTX sha256;
+//     // SHA256_Init(&sha256);
+//     // SHA256_Update(&sha256, input.c_str(), input.size());
+//     // SHA256_Final(hash, &sha256);
 
-    // char hexHash[2 * SHA256_DIGEST_LENGTH + 1];
-    // for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-    //     sprintf(hexHash + (i * 2), "%02x", hash[i]);
-    // }
+//     // char hexHash[2 * SHA256_DIGEST_LENGTH + 1];
+//     // for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+//     //     sprintf(hexHash + (i * 2), "%02x", hash[i]);
+//     // }
 
-    // std::cout << std::string(hexHash) << std::endl;
+//     // std::cout << std::string(hexHash) << std::endl;
 
 
 
-  return 0;  
+//   return 0;  
 
-}
+// }
 
 namespace BladeSDK {
 
