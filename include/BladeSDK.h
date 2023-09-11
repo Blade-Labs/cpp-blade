@@ -12,6 +12,7 @@
 #include "types.h"
 #include "service/apiService.h"
 #include "service/accountService.h"
+#include "service/securityService.h"
 
 using namespace Hedera;
 using json = nlohmann::json;
