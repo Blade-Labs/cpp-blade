@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <ctime>
 #include <openssl/aes.h>
 #include <openssl/rand.h>
 #include <openssl/bio.h>
@@ -18,6 +19,7 @@
 namespace BladeSDK {
 namespace SecurityService {
 	std::string encrypt(const std::string& data, const std::string& token);
+    std::string getTvte(const std::string& sdkVersion, const std::string& token);
     std::string generateRandomString(int length);
     std::string base64Encode(std::string binaryData);
 }}

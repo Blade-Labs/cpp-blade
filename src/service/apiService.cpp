@@ -10,7 +10,7 @@ namespace ApiService {
     namespace net = boost::asio;
     namespace ssl = boost::asio::ssl;
 
-    std::string apiHost = "rest.prod.bladewallet.io";
+    std::string apiHost = "api.bld-dev.bladewallet.io";
     std::string apiPath = "/openapi/v7";
 
     // Helper function to generate the HTTP request
@@ -24,10 +24,10 @@ namespace ApiService {
         req.set(http::field::host, host);
         req.set(http::field::user_agent, "CPP-Blade");
         req.set(http::field::content_type, "application/json");
-        req.set("X-SDK-TOKEN", options.apiKey);
-        req.set("X-FINGERPRINT", options.fingerprint);
         req.set("X-NETWORK", options.network);
+        req.set("X-VISITOR-ID", options.fingerprint);
         req.set("X-DAPP-CODE", options.dAppCode);
+        req.set("X-SDK-TVTE-API", options.tvte);
         // req.set(http::field::custom_header, "custom_value"); // Add custom header
         req.body() = body;
         req.prepare_payload();
@@ -142,10 +142,11 @@ namespace ApiService {
                       std::string apiKey,
                       std::string fingerprint,
                       std::string dAppCode,
-                      std::string network)
+                      std::string network,
+                      std::string tvte)
     {
         struct Options options = {
-          .apiKey = apiKey, .fingerprint = fingerprint, .network = network, .dAppCode = dAppCode 
+          .apiKey = apiKey, .fingerprint = fingerprint, .network = network, .dAppCode = dAppCode, .tvte = tvte
         };
         json body = {
           {"publicKey", publicKey->toStringDer()}
@@ -161,7 +162,7 @@ namespace ApiService {
       std::cout << apiHost << apiPath + "/sdk/config" << std::endl;
 
 
-      json resoponse = makeRequestGet("rest.prod.bladewallet.io", "/openapi/v7/sdk/config");
+      json resoponse = makeRequestGet("api.bld-dev.bladewallet.io", "/openapi/v7/sdk/config");
       return resoponse.value("fpAp11iKey", "default api keys fallabck");
     }
 

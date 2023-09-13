@@ -18,6 +18,18 @@ using namespace Hedera;
 using json = nlohmann::json;
 
 namespace BladeSDK {
+
+    class BladeClient {
+    private:
+        Client client;
+
+    public:
+        BladeClient(const std::string& network_);
+        AccountData createAccountBlade();
+    };
+
+
+
     int main(int argc, char** argv);
     void init(std::string apiKey_, std::string network_, std::string dAppCode_, std::string fingerprint_);
     AccountData createAccountBlade();

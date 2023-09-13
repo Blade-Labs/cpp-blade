@@ -8,6 +8,16 @@ namespace SecurityService {
     const int CIPHER_IV_LENGTH = 12;
     const int CIPHER_KEY_LENGTH = 32;
     const int MAGIC_IV_INDEX = 3;
+
+    std::string getTvte(const std::string& sdkVersion, const std::string& token) {
+        // todo get data from sdkVersion      
+        std::string platform = "Unity";
+        std::string version = "0.6.4";
+        std::time_t timestamp = std::time(nullptr);
+        return platform + "@" + encrypt(version + "@" + std::to_string(timestamp * 1000), token);
+    }
+
+
     
     std::string encrypt(const std::string& data, const std::string& token) {
         std::string ivStr = generateRandomString(CIPHER_IV_LENGTH);

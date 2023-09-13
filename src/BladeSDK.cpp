@@ -19,21 +19,27 @@
 #include "service/accountService.cpp"
 #include "service/securityService.cpp"
 
-std::string apiHost = "rest.prod.bladewallet.io";
+std::string apiHost = "api.bld-dev.bladewallet.io";
 std::string apiPath = "/openapi/v7";
 
-std::string apiKey = "";
+std::string apiKey = "Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE";
 std::string network = "";
-std::string dAppCode = "";
-std::string fingerprint = "";
+std::string dAppCode = "unitysdktest";
+std::string fingerprint = "BC238E19-6B3D-5CFC-A26A-21499FF7C25E";
+std::string sdkVersion = "Unity@0.6.4";
 Client client;
 
 using namespace Hedera;
 
 
-// int main(int argc, char** argv) {
-//   std::cout << "Blade-SDK inside namespace:" << std::endl;
+int main(int argc, char** argv) {
+  std::cout << "Blade-SDK inside namespace:" << std::endl;
 
+  BladeSDK::BladeClient bladeClient("TESTNET");
+  bladeClient.createAccountBlade();
+
+
+}
 //   BladeSDK::init("ygUgCzRrsvhWmb3dsLcDpGnJpSZ4tk8hACmZqg9WngpuQYKdnD5m8FjfPV3XVUeB", "TESTNET", "unitysdktest", "O9LAocV5ISChRrBCtvpY");
 //   // std::cout << "createAccountBlade(): " <<  std::endl;
 //   // BladeSDK::AccountData accountData = BladeSDK::createAccountBlade();
@@ -97,6 +103,63 @@ using namespace Hedera;
 
 namespace BladeSDK {
 
+
+  BladeClient::BladeClient(const std::string& network_) {
+      network = network_;
+
+      if (network == "TESTNET") {
+        client = Client::forTestnet();
+      } else if (network == "MAINNET") {
+        // still not implemented in hedera-sdk-cpp
+        // client = Client::forMainnet();
+      } else {
+        std::cerr << "Unknown network. Use TESTNET or MAINNET" << std::endl;
+        throw;
+      }
+    }
+
+    AccountData BladeClient::createAccountBlade() {
+      MnemonicBIP39 seedPhrase = getMnemonic();
+      std::unique_ptr<PrivateKey> privateKey = getPrivateKey(seedPhrase);
+      std::shared_ptr<PublicKey> publicKey = privateKey->getPublicKey();
+
+      std::string tvte = SecurityService::getTvte(sdkVersion, apiKey);
+
+      std::cout << "tvte: " << tvte << std::endl;
+      
+
+
+      json account = ApiService::createAccount(publicKey, apiHost, apiKey, fingerprint, dAppCode, network, tvte);
+
+      std::cout << "account: " << account << std::endl;
+
+      AccountService::executeUpdateAccountTransactions(
+          &client,
+          privateKey,
+          account.value("updateAccountTransactionBytes", ""),
+          account.value("transactionBytes", "")
+      );
+
+      return {
+          .seedPhrase = seedPhrase.toString(),
+          .publicKey = account.value("publicKey", ""),
+          .privateKey = privateKey->toStringDer(),
+          .accountId = account.value("id", ""),
+      };
+    }
+  
+
+
+
+
+
+
+
+
+
+
+
+
   void init(std::string apiKey_, std::string network_, std::string dAppCode_, std::string fingerprint_) {
     apiKey = apiKey_;
     network = network_;
@@ -128,7 +191,7 @@ namespace BladeSDK {
     std::unique_ptr<PrivateKey> privateKey = getPrivateKey(seedPhrase);
     std::shared_ptr<PublicKey> publicKey = privateKey->getPublicKey(); 
 
-    json account = ApiService::createAccount(publicKey, apiHost, apiKey, fingerprint, dAppCode, network);
+    json account = ApiService::createAccount(publicKey, apiHost, apiKey, fingerprint, dAppCode, network, "tvte header here");
 
     // TODO  
     // updateAccountTransactionBytes

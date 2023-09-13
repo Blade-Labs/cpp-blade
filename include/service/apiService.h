@@ -25,6 +25,7 @@ namespace ApiService {
       std::string fingerprint;
       std::string network;
       std::string dAppCode;
+      std::string tvte;
     };
     
     json createAccount(
@@ -33,7 +34,8 @@ namespace ApiService {
         std::string apiKey,
         std::string fingerprint,
         std::string dAppCode,
-        std::string network
+        std::string network,
+        std::string tvte
     );
 
     std::string getFingerprintApiKey();
