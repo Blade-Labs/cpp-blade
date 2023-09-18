@@ -37,6 +37,8 @@ namespace BladeSDK {
         public:
             Blade(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment);
             AccountData createAccountBlade();
+            AccountInfoData getAccountInfo(std::string accountId);
+            AccountBalanceData getBalance(std::string accountId);
     };
 
 

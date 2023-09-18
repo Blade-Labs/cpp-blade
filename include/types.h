@@ -37,5 +37,61 @@ namespace BladeSDK {
     }
 
 
+    struct AccountInfoData {
+        std::string accountId;
+        std::string evmAddress;
+        std::string publicKey;
+    };
+
+    std::ostream& operator<<(std::ostream& os, const AccountInfoData& data)
+    {
+        os << "{accountId: \"" << data.accountId << "\", ";
+        os << "evmAddress: \"" << data.evmAddress << "\", ";
+        os << "publicKey: \"" << data.publicKey << "\"}";
+        return os;
+    }
+
+    struct TokenBalance {
+        std::string token_id;
+        unsigned long long balance; // Use 'unsigned long long' to match C#'s ulong
+
+        TokenBalance(const std::string& tokenId, unsigned long long bal)
+            : token_id(tokenId), balance(bal) {}
+    };
+
+    std::ostream& operator<<(std::ostream& os, const TokenBalance& data)
+    {
+        os << "{token_id: \"" << data.token_id << "\", ";
+        os << "balance: " << data.balance << "}";
+        return os;
+    }
+
+    struct AccountBalanceData {
+        long long balance; // Use 'long long' to match C#'s long
+        std::vector<TokenBalance> tokens;
+
+        // Constructor for AccountBalanceData
+        AccountBalanceData(long long bal, const std::vector<TokenBalance>& tkns) 
+            : balance(bal), tokens(tkns) {}
+    };
+
+    std::ostream& operator<<(std::ostream& os, const AccountBalanceData& data)
+    {
+        os << "{balance: " << data.balance << ", ";
+        os << "tokens: [";
+
+        for (auto it = data.tokens.begin(); it != data.tokens.end(); ++it) {
+            const TokenBalance& token = *it;
+            os << token;
+
+            if (std::next(it) != data.tokens.end()) {
+                os << ", ";
+            }
+        }
+
+        os << "]}";
+        return os;
+    }
+
 
 }

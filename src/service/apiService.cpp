@@ -165,8 +165,51 @@ namespace BladeSDK {
         json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
         return result;
     }
-    
 
+
+
+    json ApiService::GET(std::string route) {
+      std::string apiHost = getMirrorNodeHost(network);
+      // std::cout << getMirrorNodeHost(network) << route << std::endl;
+      return makeRequestGet(getMirrorNodeHost(network), route);
+    }
+
+    AccountBalanceData ApiService::getBalance(std::string accountId) {
+      json accountData = GET("/api/v1/accounts/" + accountId);  
+      long long balance = accountData["balance"]["balance"].get<long long>();
+      std::vector<TokenBalance> tokens = getAccountTokens(accountId);            
+      AccountBalanceData accountBalance(balance, tokens);
+      return accountBalance;
+    }
+
+    std::vector<TokenBalance> ApiService::getAccountTokens(std::string accountId) {
+      std::vector<TokenBalance> result = {};
+      std::string nextPage = "/api/v1/accounts/" + accountId + "/tokens?limit=2";
+  
+      while (nextPage != "") {
+        json response = GET(nextPage);
+
+        if (response.contains("tokens") && response["tokens"].is_array()) {
+            // Iterate over the "tokens" array
+            for (const auto& record : response["tokens"]) {
+              std::string token_id = record["token_id"].get<std::string>();
+              long long balance = record["balance"].get<long long>();
+            
+              TokenBalance token(token_id, balance);
+              result.push_back(token);
+            }
+        } else {
+            std::cout << "\"tokens\" not found or not an array." << std::endl;
+        }
+
+        if (!response["links"]["next"].is_null()) {
+            nextPage = response["links"].value("next", "");
+        } else {
+            nextPage = "";
+        }
+      }
+      return result;
+    }
     
 
     std::string ApiService::getFingerprintApiKey() {
@@ -199,6 +242,15 @@ namespace BladeSDK {
 
     std::string ApiService::getPath(std::string path) {
       return "/openapi/v7" + path;
+    }
+
+    std::string ApiService::getMirrorNodeHost(Network network) {
+      if (network == Network::Testnet) {
+        return "testnet.mirrornode.hedera.com";
+      } else if (network == Network::Mainnet) {
+        return "mainnet-public.mirrornode.hedera.com";
+      }
+      return "";
     }
 
 }

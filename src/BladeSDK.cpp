@@ -29,9 +29,12 @@ int main(int argc, char** argv) {
   std::cout << "Blade-SDK inside namespace:" << std::endl;
 
   BladeSDK::Blade blade("Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE", BladeSDK::Network::Testnet, "unitysdktest", BladeSDK::SdkEnvironment::CI);
-  std::cout << "createAccountBlade: " << blade.createAccountBlade() << std::endl;
-  // getAccountInfo("0.0.346533")
-// getBalance("0.0.346533")
+  // WIP
+  // std::cout << "createAccountBlade: " << blade.createAccountBlade() << std::endl;
+  
+  std::cout << "getAccountInfo: " << blade.getAccountInfo("0.0.346533") << std::endl;
+
+  std::cout << "getBalance: " << blade.getBalance("0.0.346533") << std::endl;
 
 
   // std::cout << "createAccount: " << blade.createAccount("", "") << std::endl;
@@ -233,6 +236,20 @@ namespace BladeSDK {
         .privateKey = privateKey->toStringDer(),
         .accountId = account.value("id", ""),
     };
+  }
+
+  AccountInfoData Blade::getAccountInfo(std::string accountId) {
+    json result = apiService.GET("/api/v1/accounts/" + accountId);
+
+    return {
+      .accountId = result.value("account", ""),
+      .publicKey = result["key"].value("key", ""),
+      .evmAddress = result.value("evm_address", ""),
+    };
+  }
+
+  AccountBalanceData Blade::getBalance(std::string accountId) {
+    return apiService.getBalance(accountId);
   }
   
 

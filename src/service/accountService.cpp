@@ -56,6 +56,9 @@ namespace AccountService {
                 std::cout << "AccountId: " << txReceipt.mAccountId.value().toString() << std::endl;
                 break;
             }
+            default: {
+              break;
+            }
         }
     }
 

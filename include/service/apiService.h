@@ -32,11 +32,16 @@ namespace BladeSDK {
             SdkEnvironment sdkEnvironment;
 
             std::string getPath(std::string path);
+            std::string getMirrorNodeHost(Network network);
+            std::vector<TokenBalance> getAccountTokens(std::string accountId);
 
         public:
             ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment, const std::string& sdkVersion);
             void setVisitorId(std::string visitorId);
             json createAccount(std::shared_ptr<PublicKey> publicKey);
+            json GET(std::string route);
+            AccountBalanceData getBalance(std::string accountId);
+
             std::string getFingerprintApiKey();
     };
     
