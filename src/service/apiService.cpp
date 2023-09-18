@@ -2,7 +2,7 @@
 
 using namespace Hedera;
 namespace BladeSDK {
-namespace ApiService {
+
     using tcp = boost::asio::ip::tcp;
     using json = nlohmann::json;
     namespace beast = boost::beast;
@@ -10,8 +10,37 @@ namespace ApiService {
     namespace net = boost::asio;
     namespace ssl = boost::asio::ssl;
 
-    std::string apiHost = "api.bld-dev.bladewallet.io";
-    std::string apiPath = "/openapi/v7";
+
+    ApiService::ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment, const std::string& sdkVersion) {
+        this->apiKey = apiKey;
+        this->network = network;
+        this->dAppCode = dAppCode;
+        this->sdkEnvironment = sdkEnvironment;
+        this->sdkVersion = sdkVersion;
+
+        if (sdkEnvironment == SdkEnvironment::CI) {
+            this->apiHost = "api.bld-dev.bladewallet.io";
+        } else if (sdkEnvironment == SdkEnvironment::Prod) {
+            this->apiHost = "rest.prod.bladewallet.io";
+        }        
+    }
+
+    json ApiService::createAccount(std::shared_ptr<PublicKey> publicKey) {
+        std::string tvte = SecurityService::getTvte(sdkVersion, apiKey);
+
+        struct Options options = {
+          .apiKey = apiKey, .visitorId = visitorId, .network = this->network, .dAppCode = dAppCode, .tvte = tvte
+        };
+        json body = {
+          {"publicKey", publicKey->toStringDer()}
+        };
+        json result = makeRequestPost(apiHost, getPath("/accounts"), body.dump(), options);
+        return result;
+    }
+
+    void ApiService::setVisitorId(std::string visitorId) {
+      this->visitorId = visitorId;
+    }
 
     // Helper function to generate the HTTP request
     http::request<http::string_body> make_request(
@@ -24,8 +53,8 @@ namespace ApiService {
         req.set(http::field::host, host);
         req.set(http::field::user_agent, "CPP-Blade");
         req.set(http::field::content_type, "application/json");
-        req.set("X-NETWORK", options.network);
-        req.set("X-VISITOR-ID", options.fingerprint);
+        req.set("X-NETWORK", enumToString(options.network));
+        req.set("X-VISITOR-ID", options.visitorId);
         req.set("X-DAPP-CODE", options.dAppCode);
         req.set("X-SDK-TVTE-API", options.tvte);
         // req.set(http::field::custom_header, "custom_value"); // Add custom header
@@ -136,41 +165,21 @@ namespace ApiService {
         json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
         return result;
     }
+    
 
-    json createAccount(std::shared_ptr<PublicKey> publicKey,
-                      std::string apiHost,
-                      std::string apiKey,
-                      std::string fingerprint,
-                      std::string dAppCode,
-                      std::string network,
-                      std::string tvte)
-    {
-        struct Options options = {
-          .apiKey = apiKey, .fingerprint = fingerprint, .network = network, .dAppCode = dAppCode, .tvte = tvte
-        };
-        json body = {
-          {"publicKey", publicKey->toStringDer()}
-        };
-        json result = makeRequestPost(apiHost, apiPath + "/accounts", body.dump(), options);
+    
 
-        //std::cout << "ApiService::JSON RAW: " << result.dump(10) << std::endl;
-
-        return result;
-    }
-
-    std::string getFingerprintApiKey() {
-      std::cout << apiHost << apiPath + "/sdk/config" << std::endl;
-
-
-      json resoponse = makeRequestGet("api.bld-dev.bladewallet.io", "/openapi/v7/sdk/config");
+    std::string ApiService::getFingerprintApiKey() {
+      
+      json resoponse = makeRequestGet(apiHost, this->getPath("/sdk/config"));
       return resoponse.value("fpAp11iKey", "default api keys fallabck");
     }
 
-    std::string getAccountsFromPublicKey(std::shared_ptr<PublicKey> publicKey, std::string network) {
+    std::string getAccountsFromPublicKey(std::shared_ptr<PublicKey> publicKey, Network network) {
       std::string apiHost;
-      if (network == "TESTNET") {
+      if (network == Network::Testnet) {
         apiHost = "testnet.mirrornode.hedera.com";
-      } else if (network == "MAINNET") {
+      } else if (network == Network::Mainnet) {
         apiHost = "mainnet-public.mirrornode.hedera.com";
       }
 
@@ -186,4 +195,10 @@ namespace ApiService {
       }
       return "";
     }
-}}
+
+
+    std::string ApiService::getPath(std::string path) {
+      return "/openapi/v7" + path;
+    }
+
+}

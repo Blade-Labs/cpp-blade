@@ -4,6 +4,8 @@
 #include "Client.h"
 #include "Transaction.h"
 #include "TransferTransaction.h"
+#include "TokenAssociateTransaction.h"
+#include "WrappedTransaction.h"
 #include "AccountCreateTransaction.h"
 #include "ChunkedTransaction.h"
 #include "ECDSAsecp256k1PrivateKey.h"

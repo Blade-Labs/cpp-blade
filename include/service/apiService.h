@@ -8,37 +8,39 @@
 #include <boost/beast.hpp>
 #include <boost/beast/ssl.hpp>
 #include <nlohmann/json.hpp>
+#include "enum/Enums.h"
 
 using namespace Hedera;
 
 namespace BladeSDK {
-namespace ApiService {
+
     namespace beast = boost::beast;
     namespace http = beast::http;
     namespace net = boost::asio;
     namespace ssl = net::ssl;
     using json = nlohmann::json;
     
-    struct Options 
-    {
-      std::string apiKey;
-      std::string fingerprint;
-      std::string network;
-      std::string dAppCode;
-      std::string tvte;
+
+    class ApiService {
+        private:
+            std::string apiHost = "api.bld-dev.bladewallet.io";
+            std::string apiKey = "";
+            Network network;
+            std::string dAppCode = "";
+            std::string visitorId = "";
+            std::string sdkVersion = "";
+            SdkEnvironment sdkEnvironment;
+
+            std::string getPath(std::string path);
+
+        public:
+            ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment, const std::string& sdkVersion);
+            void setVisitorId(std::string visitorId);
+            json createAccount(std::shared_ptr<PublicKey> publicKey);
+            std::string getFingerprintApiKey();
     };
     
-    json createAccount(
-        std::shared_ptr<PublicKey> publicKey,
-        std::string apiHost,
-        std::string apiKey,
-        std::string fingerprint,
-        std::string dAppCode,
-        std::string network,
-        std::string tvte
-    );
 
-    std::string getFingerprintApiKey();
     void performHttpsGetRequest(const std::string& host, const std::string& target);
 
     std::string getAccountsFromPublicKey(
@@ -61,6 +63,6 @@ namespace ApiService {
         struct Options options
     );
 
-}}
+}
 
 #endif // BLADE_SERVICE_API_H_
