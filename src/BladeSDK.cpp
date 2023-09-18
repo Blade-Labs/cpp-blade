@@ -32,15 +32,13 @@ int main(int argc, char** argv) {
   // WIP
   // std::cout << "createAccountBlade: " << blade.createAccountBlade() << std::endl;
   
-  std::cout << "getAccountInfo: " << blade.getAccountInfo("0.0.346533") << std::endl;
+  // std::cout << "getAccountInfo: " << blade.getAccountInfo("0.0.346533") << std::endl;
 
-  std::cout << "getBalance: " << blade.getBalance("0.0.346533") << std::endl;
+  // std::cout << "getBalance: " << blade.getBalance("0.0.346533") << std::endl;
 
 
   // std::cout << "createAccount: " << blade.createAccount("", "") << std::endl;
-  // std::cout << "importAccount: " << blade.importAccount("") << std::endl;
-
-
+  std::cout << "importAccount: " << blade.importAccount("best soccer little verify love ladder else kick depth mesh silly desert", true) << std::endl; // 0.0.2018696
 
             // transfer hbars
             // Debug.Log(
@@ -252,16 +250,18 @@ namespace BladeSDK {
     return apiService.getBalance(accountId);
   }
   
+  PrivateKeyData Blade::importAccount(std::string seedPhrase, bool lookupAccounts) {
+    MnemonicBIP39 mnemonic = MnemonicBIP39::initializeBIP39Mnemonic(seedPhrase);
+    std::unique_ptr<PrivateKey> privateKey = getPrivateKey(mnemonic);
+    std::vector<std::string> accountIds = apiService.getAccountsFromPublicKey(privateKey->getPublicKey()->toStringRaw());
 
-
-
-
-
-  // std::string Blade::getFingerprintApiKey() {
-  //   return apiService.getFingerprintApiKey();
-  // }
-
-  
+    return {
+      .privateKey = privateKey->toStringDer(),
+      .publicKey = privateKey->getPublicKey()->toStringDer(),
+      .seedPhrase = mnemonic.toString(),
+      .accounts = accountIds,
+    };
+  }  
 
   // AccountData createAccount(std::string operatorAccountId, std::string operatorPrivateKey)
   // {
@@ -395,8 +395,8 @@ namespace BladeSDK {
   }
 
   std::unique_ptr<PrivateKey> Blade::getPrivateKey(MnemonicBIP39 mnemonic) {
-    return mnemonic.toStandardECDSAsecp256k1PrivateKey();
-    // return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
+    // return mnemonic.toStandardECDSAsecp256k1PrivateKey();
+    return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
   }
 
 

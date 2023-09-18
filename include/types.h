@@ -93,5 +93,31 @@ namespace BladeSDK {
         return os;
     }
 
+    struct PrivateKeyData {
+      std::string privateKey;
+      std::string publicKey;
+      std::string seedPhrase;
+      std::vector<std::string> accounts;
+    };
+
+    std::ostream& operator<<(std::ostream& os, const PrivateKeyData& data)
+    {
+        os << "{privateKey: \"" << data.privateKey << "\", ";
+        os << "publicKey: \"" << data.publicKey << "\", ";
+        os << "seedPhrase: \"" << data.seedPhrase << "\", ";
+        os << "accounts: [";
+
+        for (auto it = data.accounts.begin(); it != data.accounts.end(); ++it) {
+            const std::string& account = *it;
+            os << "\"" << account << "\"";
+
+            if (std::next(it) != data.accounts.end()) {
+                os << ", ";
+            }
+        }
+
+        os << "]}";
+        return os;
+    }
 
 }

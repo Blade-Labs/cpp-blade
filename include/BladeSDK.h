@@ -39,6 +39,7 @@ namespace BladeSDK {
             AccountData createAccountBlade();
             AccountInfoData getAccountInfo(std::string accountId);
             AccountBalanceData getBalance(std::string accountId);
+            PrivateKeyData importAccount(std::string seedPhrase, bool lookupAccounts);
     };
 
 

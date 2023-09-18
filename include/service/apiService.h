@@ -41,7 +41,7 @@ namespace BladeSDK {
             json createAccount(std::shared_ptr<PublicKey> publicKey);
             json GET(std::string route);
             AccountBalanceData getBalance(std::string accountId);
-
+            std::vector<std::string> getAccountsFromPublicKey(std::string publicKey);
             std::string getFingerprintApiKey();
     };
     

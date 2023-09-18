@@ -212,31 +212,20 @@ namespace BladeSDK {
     }
     
 
-    std::string ApiService::getFingerprintApiKey() {
-      
+    std::string ApiService::getFingerprintApiKey() {    
+      // TODO use in future
+
       json resoponse = makeRequestGet(apiHost, this->getPath("/sdk/config"));
       return resoponse.value("fpAp11iKey", "default api keys fallabck");
     }
 
-    std::string getAccountsFromPublicKey(std::shared_ptr<PublicKey> publicKey, Network network) {
-      std::string apiHost;
-      if (network == Network::Testnet) {
-        apiHost = "testnet.mirrornode.hedera.com";
-      } else if (network == Network::Mainnet) {
-        apiHost = "mainnet-public.mirrornode.hedera.com";
+    std::vector<std::string> ApiService::getAccountsFromPublicKey(std::string publicKey) {
+      std::vector<std::string> result = {};
+      json resoponse = GET("/api/v1/accounts?account.publickey=" + publicKey);
+      for (int i = 0; i < resoponse["accounts"].size(); i++) {
+        result.push_back(resoponse["accounts"][i].value("account", ""));
       }
-
-      std::string apiPath = "/api/v1/accounts?account.publickey=" + publicKey->toStringDer();
-      json resoponse = makeRequestGet(apiHost, apiPath);
-          
-
-      // TODO add support of multiple accounts id
-      nlohmann::json accounts = resoponse["accounts"];
-
-      for (int i = 0; i < accounts.size(); i++) {
-        return accounts[i].value("account", "");
-      }
-      return "";
+      return result;
     }
 
 
