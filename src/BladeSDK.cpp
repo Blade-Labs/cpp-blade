@@ -42,6 +42,10 @@ int main(int argc, char** argv) {
   // // std::cout << "transferHbars: " << blade.transferHbars("0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "15", "cpp-sdk-test") << std::endl;
   // blade.transferHbars("0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "15", "cpp-sdk-test");
 
+  // WIP
+  blade.transferTokens("0.0.433870", "0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "1", "cpp-sdk-paid-token-transfer", false);
+
+
             // transfer tokens
             // Debug.Log(
             //     await bladeSdk.transferTokens(
@@ -259,8 +263,24 @@ namespace BladeSDK {
 
       std::cout << "executed" << std::endl;
 
-      TransactionReceipt txReceipt = txResponse.getReceipt(client);
-      return txReceipt;
+      return txResponse.getReceipt(client);
+  }
+
+  TransactionReceipt Blade::transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer) {
+
+    Client client = this->getClient();
+    client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey).get());
+    TokenId token = TokenId::fromString(tokenId);
+
+    TransactionResponse txResponse = TransferTransaction()
+                                    .addTokenTransfer(token, AccountId::fromString(accountId), -10LL)
+                                    .addTokenTransfer(token, AccountId::fromString(receiverId), 10LL)
+                                    .freezeWith(&client)
+                                    .execute(client);
+      
+      std::cout << "executed" << std::endl;
+
+      return txResponse.getReceipt(client);
   }
 
 

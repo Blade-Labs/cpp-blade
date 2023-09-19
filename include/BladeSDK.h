@@ -41,6 +41,7 @@ namespace BladeSDK {
             AccountBalanceData getBalance(std::string accountId);
             PrivateKeyData importAccount(std::string seedPhrase, bool lookupAccounts);
             TransactionReceipt transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo);
+            TransactionReceipt transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer);
 
 
 
