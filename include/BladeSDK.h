@@ -22,7 +22,6 @@ namespace BladeSDK {
 
     class Blade {
         private:
-            Client client;
             ApiService apiService;
             std::string apiKey = "Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE";
             Network network = Network::Testnet;
@@ -31,6 +30,7 @@ namespace BladeSDK {
             std::string sdkVersion = "Unity@0.6.4";
             SdkEnvironment sdkEnvironment = SdkEnvironment::CI; // "CI";
             
+            Client getClient();
             MnemonicBIP39 getMnemonic();
             std::unique_ptr<PrivateKey> getPrivateKey(MnemonicBIP39);
 
@@ -40,6 +40,10 @@ namespace BladeSDK {
             AccountInfoData getAccountInfo(std::string accountId);
             AccountBalanceData getBalance(std::string accountId);
             PrivateKeyData importAccount(std::string seedPhrase, bool lookupAccounts);
+            TransactionReceipt transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo);
+
+
+
     };
 
 

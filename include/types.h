@@ -1,6 +1,5 @@
 namespace BladeSDK {
-    struct AccountData
-    {
+    struct AccountData {
       std::string seedPhrase;
       std::string publicKey;
       std::string privateKey;
@@ -8,8 +7,7 @@ namespace BladeSDK {
     };
 
     // Overload the << operator for AccountData
-    std::ostream& operator<<(std::ostream& os, const AccountData& account)
-    {
+    std::ostream& operator<<(std::ostream& os, const AccountData& account) {
         os << "{seedPhrase: \"" << account.seedPhrase << "\", ";
         os << "publicKey: \"" << account.publicKey << "\", ";
         os << "privateKey: \"" << account.privateKey << "\", ";
@@ -17,8 +15,7 @@ namespace BladeSDK {
         return os;
     }
 
-    struct Options 
-    {
+    struct Options {
       std::string apiKey;
       std::string visitorId;
       Network network;
@@ -26,8 +23,7 @@ namespace BladeSDK {
       std::string tvte;
     };
 
-    std::ostream& operator<<(std::ostream& os, const Options& options)
-    {
+    std::ostream& operator<<(std::ostream& os, const Options& options) {
         os << "{apiKey: \"" << options.apiKey << "\", ";
         os << "visitorId: \"" << options.visitorId << "\", ";
         os << "network: \"" << options.network << "\", ";
@@ -43,8 +39,7 @@ namespace BladeSDK {
         std::string publicKey;
     };
 
-    std::ostream& operator<<(std::ostream& os, const AccountInfoData& data)
-    {
+    std::ostream& operator<<(std::ostream& os, const AccountInfoData& data) {
         os << "{accountId: \"" << data.accountId << "\", ";
         os << "evmAddress: \"" << data.evmAddress << "\", ";
         os << "publicKey: \"" << data.publicKey << "\"}";
@@ -59,8 +54,7 @@ namespace BladeSDK {
             : token_id(tokenId), balance(bal) {}
     };
 
-    std::ostream& operator<<(std::ostream& os, const TokenBalance& data)
-    {
+    std::ostream& operator<<(std::ostream& os, const TokenBalance& data) {
         os << "{token_id: \"" << data.token_id << "\", ";
         os << "balance: " << data.balance << "}";
         return os;
@@ -75,8 +69,7 @@ namespace BladeSDK {
             : balance(bal), tokens(tkns) {}
     };
 
-    std::ostream& operator<<(std::ostream& os, const AccountBalanceData& data)
-    {
+    std::ostream& operator<<(std::ostream& os, const AccountBalanceData& data) {
         os << "{balance: " << data.balance << ", ";
         os << "tokens: [";
 
@@ -100,8 +93,7 @@ namespace BladeSDK {
       std::vector<std::string> accounts;
     };
 
-    std::ostream& operator<<(std::ostream& os, const PrivateKeyData& data)
-    {
+    std::ostream& operator<<(std::ostream& os, const PrivateKeyData& data) {
         os << "{privateKey: \"" << data.privateKey << "\", ";
         os << "publicKey: \"" << data.publicKey << "\", ";
         os << "seedPhrase: \"" << data.seedPhrase << "\", ";

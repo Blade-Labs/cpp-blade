@@ -36,21 +36,12 @@ int main(int argc, char** argv) {
 
   // std::cout << "getBalance: " << blade.getBalance("0.0.346533") << std::endl;
 
+  // std::cout << "importAccount: " << blade.importAccount("best soccer little verify love ladder else kick depth mesh silly desert", true) << std::endl; // ECDSA, 0.0.2018696
 
-  // std::cout << "createAccount: " << blade.createAccount("", "") << std::endl;
-  std::cout << "importAccount: " << blade.importAccount("best soccer little verify love ladder else kick depth mesh silly desert", true) << std::endl; // 0.0.2018696
+  // WIP
+  // // std::cout << "transferHbars: " << blade.transferHbars("0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "15", "cpp-sdk-test") << std::endl;
+  // blade.transferHbars("0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "15", "cpp-sdk-test");
 
-            // transfer hbars
-            // Debug.Log(
-            //     await bladeSdk.transferHbars(
-            //         "0.0.346533",
-            //         "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b",
-            //         "0.0.346530",
-            //         "15",
-            //         "unity-sdk-test-ok"
-            //     )
-            // );
-            
             // transfer tokens
             // Debug.Log(
             //     await bladeSdk.transferTokens(
@@ -201,15 +192,6 @@ namespace BladeSDK {
     // TODO get visitorId from fingerprint
     // TODO register device
     apiService.setVisitorId(this->visitorId);
-
-    if (network == Network::Testnet) {
-      this->client = Client::forTestnet();
-    } else if (network == Network::Mainnet) {
-      this->client = Client::forMainnet();
-    } else {
-      std::cerr << "Unknown network. Use BladeSDK::Network::Testnet or Mainnet" << std::endl;
-      throw;
-    }
   }
 
   AccountData Blade::createAccountBlade() {
@@ -220,6 +202,7 @@ namespace BladeSDK {
     json account = apiService.createAccount(publicKey);
     std::cout << "account: " << account.dump(4) << std::endl;
 
+    Client client = this->getClient();
 
     AccountService::executeUpdateAccountTransactions(
         &client,
@@ -262,6 +245,24 @@ namespace BladeSDK {
       .accounts = accountIds,
     };
   }  
+
+  TransactionReceipt Blade::transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo) {
+      Client client = this->getClient();
+      client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey).get());
+      const Hbar amountHbar(std::stoull(amount), HbarUnit::HBAR());
+
+      TransactionResponse txResponse = TransferTransaction()
+                                     .addHbarTransfer(AccountId::fromString(accountId), amountHbar.negated())
+                                     .addHbarTransfer(AccountId::fromString(recieverAccount), amountHbar)
+                                     .setTransactionMemo(memo)
+                                     .execute(client);
+
+      std::cout << "executed" << std::endl;
+
+      TransactionReceipt txReceipt = txResponse.getReceipt(client);
+      return txReceipt;
+  }
+
 
   // AccountData createAccount(std::string operatorAccountId, std::string operatorPrivateKey)
   // {
@@ -399,7 +400,13 @@ namespace BladeSDK {
     return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
   }
 
-
+  Client Blade::getClient() {
+    if (this->network == Network::Mainnet) {
+      return Client::forMainnet();
+    } else {
+      return Client::forTestnet();
+    }
+  }
 
 
 
