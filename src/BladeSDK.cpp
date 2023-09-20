@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 
   // WIP
   // // std::cout << "transferHbars: " << blade.transferHbars("0.0.346533", privateKeyHex, "0.0.346530", "15", "cpp-sdk-test") << std::endl;
-  // blade.transferHbars("0.0.346533", privateKeyHex, "0.0.346530", "15", "cpp-sdk-test");
+  blade.transferHbars("0.0.346533", privateKeyHex, "0.0.346530", "15", "cpp-sdk-test");
 
   // WIP
   // blade.transferTokens("0.0.433870", "0.0.346533", privateKeyHex, "0.0.346530", "1", "cpp-sdk-paid-token-transfer", false);
@@ -55,22 +55,22 @@ int main(int argc, char** argv) {
   // WIP
   // blade.transferTokens("0.0.433870", "0.0.346533", privateKeyHex, "0.0.346530", "1", "cpp-sdk-free-token-transfer", true);
 
-  // sign + verify
-  std::string message = "hello";
-  std::string messageBase64 = BladeSDK::UtilService::stringToBase64(message);
-  std::string messageHex = BladeSDK::UtilService::vectorToHex(BladeSDK::UtilService::stringToVector(message));
+  // // sign + verify
+  // std::string message = "hello";
+  // std::string messageBase64 = BladeSDK::UtilService::stringToBase64(message);
+  // std::string messageHex = BladeSDK::UtilService::vectorToHex(BladeSDK::UtilService::stringToVector(message));
 
-  BladeSDK::SignMessageData signature = blade.sign(message, privateKeyHex, "string");
-  std::cout << "Sign str (" << message << "): " << signature << std::endl;
-  std::cout << "Valid?: " << blade.signVerify(message, signature.signedMessage, publicKeyHex, "string") << std::endl;  
+  // BladeSDK::SignMessageData signature = blade.sign(message, privateKeyHex, "string");
+  // std::cout << "Sign str (" << message << "): " << signature << std::endl;
+  // std::cout << "Valid?: " << blade.signVerify(message, signature.signedMessage, publicKeyHex, "string") << std::endl;  
 
-  signature = blade.sign(messageBase64, privateKeyHex, "base64");
-  std::cout << "Sign base64 (" << messageBase64 << "): " << signature << std::endl;
-  std::cout << "Valid?: " << blade.signVerify(messageBase64, signature.signedMessage, publicKeyHex, "base64") << std::endl;
+  // signature = blade.sign(messageBase64, privateKeyHex, "base64");
+  // std::cout << "Sign base64 (" << messageBase64 << "): " << signature << std::endl;
+  // std::cout << "Valid?: " << blade.signVerify(messageBase64, signature.signedMessage, publicKeyHex, "base64") << std::endl;
 
-  signature = blade.sign(messageHex, privateKeyHex, "hex");
-  std::cout << "Sign hex (" << messageHex << "): " << signature << std::endl;
-  std::cout << "Valid?: " << blade.signVerify(messageHex, signature.signedMessage, publicKeyHex, "hex") << std::endl;
+  // signature = blade.sign(messageHex, privateKeyHex, "hex");
+  // std::cout << "Sign hex (" << messageHex << "): " << signature << std::endl;
+  // std::cout << "Valid?: " << blade.signVerify(messageHex, signature.signedMessage, publicKeyHex, "hex") << std::endl;
 
 
 

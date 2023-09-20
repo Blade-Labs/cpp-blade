@@ -9,8 +9,8 @@ set(Protobuf_USE_STATIC_LIBS ON)
 include(FetchContent)
 FetchContent_Declare(
         hedera-sdk-cpp
-	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.15.0/hedera-sdk-cpp-v0.15.0-8ef1414d.tar.gz
-        URL_HASH SHA256=e2aa8305c6c0559a2dd05a64075c891797e86939b84f022f7f0c7ffa84d21d8b
+	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.16.0/hedera-sdk-cpp-v0.16.0-90da24ac.tar.gz
+        URL_HASH SHA256=1a01d4b01a15ce0168d6a8b294534723d70738ac3b350ba90698dbc2ae633303
 )
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(hedera-sdk-cpp)
@@ -34,8 +34,8 @@ find_package(Boost REQUIRED)
 
 
 
-# add_executable(${PROJECT_NAME} src/BladeSDK.cpp)
-add_library(${PROJECT_NAME} STATIC)
+add_executable(${PROJECT_NAME} src/BladeSDK.cpp)
+# add_library(${PROJECT_NAME} STATIC)
 
 include_directories(${Boost_INCLUDE_DIRS}/boost)
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/include)
