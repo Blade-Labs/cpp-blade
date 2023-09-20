@@ -72,40 +72,8 @@ namespace SecurityService {
         result.append(cipher.begin(), cipher.begin() + ciphertext_len);
         result.append(tag, tag + AES_BLOCK_SIZE);
 
-        return base64Encode(result);
+        return UtilService::stringToBase64(result);
     }
-
-    std::string base64Encode(std::string binaryData) {
-        std::vector<char> encodedBuffer(boost::beast::detail::base64::encoded_size(binaryData.size()));
-
-        boost::beast::detail::base64::encode(
-            encodedBuffer.data(),
-            binaryData.data(),
-            binaryData.size()
-        );
-
-        std::string encodedData(encodedBuffer.begin(), encodedBuffer.end());
-        return encodedData;
-    }
-
-
-    std::vector<std::byte> base64ToVector(std::string encoded) {
-        std::string decoded;
-
-        decoded.resize(boost::beast::detail::base64::decoded_size(encoded.size()));
-        std::pair<std::size_t, std::size_t> decodedInfo = boost::beast::detail::base64::decode(&decoded[0], encoded.data(), encoded.size());
-        
-        std::vector<std::byte> output(decodedInfo.first);
-        for (std::size_t i = 0; i < decodedInfo.first; i++) {
-            output[i] = static_cast<std::byte>(decoded[i]);
-        }
-        
-        return output;
-    }
-
-
-
-
 
     std::string generateRandomString(int length) {
         static const char charset[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

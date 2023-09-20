@@ -121,4 +121,14 @@ namespace BladeSDK {
         os << "{transactionBytes (base64): \"" << data.transactionBytes << "\"}";
         return os;
     }
+
+    struct SignMessageData {
+        std::string signedMessage;
+        std::vector<std::byte> bytes;
+    };
+
+    std::ostream& operator<<(std::ostream& os, const SignMessageData& data) {
+        os << "{signedMessage: \"" << data.signedMessage << "\"}";
+        return os;
+    }
 }

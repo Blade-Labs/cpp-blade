@@ -15,14 +15,11 @@
 #include <openssl/err.h>
 #include <boost/beast/core/detail/base64.hpp>
 
-
 namespace BladeSDK {
 namespace SecurityService {
 	std::string encrypt(const std::string& data, const std::string& token);
     std::string getTvte(const std::string& sdkVersion, const std::string& token);
     std::string generateRandomString(int length);
-    std::string base64Encode(std::string binaryData);
-    std::vector<std::byte> base64ToVector(std::string encoded);
 }}
 
 #endif // BLADE_SERVICE_SECURITY_H_

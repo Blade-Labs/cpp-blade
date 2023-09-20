@@ -14,7 +14,7 @@ namespace AccountService {
     {
       std::cout <<std::endl<<std::endl<< "updateAccountTransactionBytes: " << updateAccountTransactionBytes << std::endl;
 
-      std::vector<std::byte> bytes = SecurityService::base64ToVector(updateAccountTransactionBytes);
+      std::vector<std::byte> bytes = UtilService::base64ToVector(updateAccountTransactionBytes);
       // Transaction<TransferTransaction>::fromBytes(bytes);
       
       // auto [index, variant] = Transaction<AccountCreateTransaction>::fromBytes(bytes);
@@ -24,7 +24,7 @@ namespace AccountService {
     }
 
     if (transactionBytes != "") {
-        std::vector<std::byte> bytes = SecurityService::base64ToVector(transactionBytes);
+        std::vector<std::byte> bytes = UtilService::base64ToVector(transactionBytes);
         const WrappedTransaction tx = Transaction<TokenAssociateTransaction>::fromBytes(bytes);
 
         switch (tx.getTransactionType()) {

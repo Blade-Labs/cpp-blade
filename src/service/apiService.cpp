@@ -56,7 +56,7 @@ namespace BladeSDK {
         std::string transactionBytes = result.value("transactionBytes", "");
         return {
           .transactionBytes = transactionBytes,
-          .bytes = SecurityService::base64ToVector(transactionBytes),
+          .bytes = UtilService::base64ToVector(transactionBytes),
         };
     }
 

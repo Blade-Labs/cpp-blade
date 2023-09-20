@@ -1,4 +1,5 @@
 #include "ECDSAsecp256k1PrivateKey.h"
+#include "ECDSAsecp256k1PublicKey.h"
 #include "ED25519PrivateKey.h"
 #include "PrivateKey.h"
 #include "MnemonicBIP39.h"
@@ -13,6 +14,7 @@
 #include <nlohmann/json.hpp>
 #include "enum/Enums.h"
 #include "types.h"
+#include "service/utilService.h"
 #include "service/apiService.h"
 #include "service/accountService.h"
 #include "service/securityService.h"
@@ -44,32 +46,10 @@ namespace BladeSDK {
             PrivateKeyData importAccount(std::string seedPhrase, bool lookupAccounts);
             TransactionReceipt transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo);
             TransactionReceipt transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer);
-
-
+            SignMessageData sign(std::string message, std::string signerKey, std::string encoding);
+            bool signVerify(std::string message, std::string signatureHex, std::string key, std::string encoding);
 
     };
 
-
-
     int main(int argc, char** argv);
-    
-    // AccountData createAccount(std::string operatorAccountId, std::string operatorPrivateKey);
-    // AccountData importAccount(std::string);
-    // std::vector<unsigned char> signMessage(std::string message, std::string signerKey);
-    // bool verifyMessage(std::string message, std::string signatureHex, std::string key);
-    // void transferHbars(std::string accountId, std::string accountPrivateKey, std::string receiverID, double amount);
-    // void transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverID, double amount, bool freeTransfer);
-
-    // std::string getFingerprintApiKey();
-
-    
-    
-    void printAccount(AccountData);
-    void printVec(std::vector<unsigned char> vec);
-    // std::string vectorToHex(const std::vector<unsigned char>& data);
-    std::string vectorToHex(const std::vector<std::byte>& data);
-
-    std::vector<unsigned char> hexToVector(const std::string& hexString);
-    
-    
 }
