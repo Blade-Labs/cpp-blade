@@ -43,34 +43,10 @@ int main(int argc, char** argv) {
   // blade.transferHbars("0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "15", "cpp-sdk-test");
 
   // WIP
-  blade.transferTokens("0.0.433870", "0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "1", "cpp-sdk-paid-token-transfer", false);
+  // blade.transferTokens("0.0.433870", "0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "1", "cpp-sdk-paid-token-transfer", false);
 
-
-            // transfer tokens
-            // Debug.Log(
-            //     await bladeSdk.transferTokens(
-            //         "0.0.433870",
-            //         "0.0.346533",
-            //         "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b",
-            //         "0.0.346530",
-            //          "1",
-            //         "unity-sdk-paid-token-transfer",
-            //         false
-            //     )
-            // );
-
-            // free transfer tokens
-            // Debug.Log(
-            //     await bladeSdk.transferTokens(
-            //         "0.0.433870", /// token id assigned on server side for dAppCode
-            //         "0.0.346533",
-            //         "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b",
-            //         "0.0.346530",
-            //          "1",
-            //         "unity-sdk-free-token-transfer",
-            //         true
-            //     )
-            // );
+  // WIP
+  blade.transferTokens("0.0.433870", "0.0.346533", "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b", "0.0.346530", "1", "cpp-sdk-free-token-transfer", true);
 
 
 
@@ -267,20 +243,42 @@ namespace BladeSDK {
   }
 
   TransactionReceipt Blade::transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer) {
-
+    PrivateKey* privateKey = ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey).get();
     Client client = this->getClient();
-    client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey).get());
-    TokenId token = TokenId::fromString(tokenId);
+    client.setOperator(AccountId::fromString(accountId), privateKey);
+    json tokenMeta = apiService.GET("/api/v1/tokens/" + tokenId);
+    std::string decimals = tokenMeta.value("decimals", "0");
+    long long correctedAmount = std::stoull(amount) * std::pow(10, std::stoi(decimals));
 
-    TransactionResponse txResponse = TransferTransaction()
-                                    .addTokenTransfer(token, AccountId::fromString(accountId), -10LL)
-                                    .addTokenTransfer(token, AccountId::fromString(receiverId), 10LL)
-                                    .freezeWith(&client)
-                                    .execute(client);
+    if (freeTransfer) {
+      FreeTokenTransferResponse response = apiService.freeTokenTransfer(accountId, receiverId, correctedAmount, memo);
       
-      std::cout << "executed" << std::endl;
+      const WrappedTransaction tx = Transaction<TokenAssociateTransaction>::fromBytes(response.bytes);
+      if (tx.getTransactionType() == TransactionType::TRANSFER_TRANSACTION) {
+        TransferTransaction transferTransaction = *tx.getTransaction<TransferTransaction>();
+        TransactionResponse txResp = transferTransaction
+          .freezeWith(&client)
+          .sign(privateKey)
+          .execute(client)
+        ;
+        std::cout << "executed" << std::endl;
+        TransactionReceipt txReceipt = txResp.getReceipt(client);
 
-      return txResponse.getReceipt(client);
+        std::cout << "AccountId: " << txReceipt.mAccountId.value().toString() << std::endl;
+      }
+    } else {
+      TokenId token = TokenId::fromString(tokenId);
+
+      TransactionResponse txResponse = TransferTransaction()
+                                      .addTokenTransfer(token, AccountId::fromString(accountId), -correctedAmount)
+                                      .addTokenTransfer(token, AccountId::fromString(receiverId), correctedAmount)
+                                      .freezeWith(&client)
+                                      .execute(client);
+        
+        std::cout << "executed" << std::endl;
+
+        return txResponse.getReceipt(client);
+    }
   }
 
 

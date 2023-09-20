@@ -88,6 +88,25 @@ namespace SecurityService {
         return encodedData;
     }
 
+
+    std::vector<std::byte> base64ToVector(std::string encoded) {
+        std::string decoded;
+
+        decoded.resize(boost::beast::detail::base64::decoded_size(encoded.size()));
+        std::pair<std::size_t, std::size_t> decodedInfo = boost::beast::detail::base64::decode(&decoded[0], encoded.data(), encoded.size());
+        
+        std::vector<std::byte> output(decodedInfo.first);
+        for (std::size_t i = 0; i < decodedInfo.first; i++) {
+            output[i] = static_cast<std::byte>(decoded[i]);
+        }
+        
+        return output;
+    }
+
+
+
+
+
     std::string generateRandomString(int length) {
         static const char charset[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         static std::random_device rd;

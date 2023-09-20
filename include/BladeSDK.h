@@ -1,8 +1,10 @@
 #include "ECDSAsecp256k1PrivateKey.h"
 #include "ED25519PrivateKey.h"
+#include "PrivateKey.h"
 #include "MnemonicBIP39.h"
 #include "Client.h"
 #include "AccountCreateTransaction.h"
+#include "TransferTransaction.h"
 #include "TransactionReceipt.h"
 #include "TransactionResponse.h"
 

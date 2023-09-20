@@ -22,6 +22,7 @@ namespace SecurityService {
     std::string getTvte(const std::string& sdkVersion, const std::string& token);
     std::string generateRandomString(int length);
     std::string base64Encode(std::string binaryData);
+    std::vector<std::byte> base64ToVector(std::string encoded);
 }}
 
 #endif // BLADE_SERVICE_SECURITY_H_

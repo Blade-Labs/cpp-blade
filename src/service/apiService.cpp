@@ -38,6 +38,28 @@ namespace BladeSDK {
         return result;
     }
 
+    FreeTokenTransferResponse ApiService::freeTokenTransfer(std::string accountId, std::string recieverAccount, long long correctedAmount, std::string memo) {
+        std::string tvte = SecurityService::getTvte(sdkVersion, apiKey);
+
+        struct Options options = {
+          .apiKey = apiKey, .visitorId = visitorId, .network = this->network, .dAppCode = dAppCode, .tvte = tvte
+        };
+        json body = {
+          {"receiverAccountId", recieverAccount},
+          {"senderAccountId", accountId},
+          {"amount", correctedAmount},
+          {"memo", memo},
+        };
+
+        json result = makeRequestPost(apiHost, getPath("/tokens/transfers"), body.dump(), options);
+        
+        std::string transactionBytes = result.value("transactionBytes", "");
+        return {
+          .transactionBytes = transactionBytes,
+          .bytes = SecurityService::base64ToVector(transactionBytes),
+        };
+    }
+
     void ApiService::setVisitorId(std::string visitorId) {
       this->visitorId = visitorId;
     }

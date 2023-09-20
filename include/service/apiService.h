@@ -39,6 +39,8 @@ namespace BladeSDK {
             ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment, const std::string& sdkVersion);
             void setVisitorId(std::string visitorId);
             json createAccount(std::shared_ptr<PublicKey> publicKey);
+            FreeTokenTransferResponse freeTokenTransfer(std::string accountId, std::string recieverAccount, long long correctedAmount, std::string memo);
+            
             json GET(std::string route);
             AccountBalanceData getBalance(std::string accountId);
             std::vector<std::string> getAccountsFromPublicKey(std::string publicKey);
