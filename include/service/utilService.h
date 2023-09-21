@@ -6,8 +6,10 @@
 #include <vector>
 #include <random>
 #include <ctime>
+#include "TransactionReceipt.h"
 #include <boost/beast/core/detail/base64.hpp>
 
+using namespace Hedera;
 
 namespace BladeSDK {
 namespace UtilService {
@@ -16,6 +18,7 @@ namespace UtilService {
     std::string vectorToHex(const std::vector<std::byte>& data);
     std::vector<std::byte> hexToVector(const std::string& hexString);
     std::vector<std::byte> stringToVector(const std::string& str);
+    TxReceipt formatReceipt(TransactionReceipt receipt);
 }}
 
 #endif // BLADE_SERVICE_UTIL_H_

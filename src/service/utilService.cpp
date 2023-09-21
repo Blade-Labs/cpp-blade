@@ -1,4 +1,5 @@
 #include "../../include/service/utilService.h"
+#include "TransactionReceipt.h"
 
 using namespace Hedera;
 
@@ -64,5 +65,15 @@ namespace UtilService {
         }
         return byteVector;
     }
-    
+
+    TxReceipt formatReceipt(TransactionReceipt receipt) {
+        // std::cout << receipt.mTransactionId.toString() << std::endl;
+ 
+        return {
+            .transactionId = receipt.mTransactionId.toString(),
+            .status = std::string(gStatusToString.at(receipt.mStatus)),
+            .transactionReceipt = receipt
+        };
+    }
+
 }}

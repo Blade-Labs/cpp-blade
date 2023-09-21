@@ -12,9 +12,10 @@ namespace AccountService {
   ) {
     if (updateAccountTransactionBytes != "")
     {
-      std::cout <<std::endl<<std::endl<< "updateAccountTransactionBytes: " << updateAccountTransactionBytes << std::endl;
+      // TODO
+      std::cout <<std::endl<<std::endl<< "TODO execute: updateAccountTransactionBytes: " << updateAccountTransactionBytes << std::endl;
 
-      std::vector<std::byte> bytes = UtilService::base64ToVector(updateAccountTransactionBytes);
+      // std::vector<std::byte> bytes = UtilService::base64ToVector(updateAccountTransactionBytes);
       // Transaction<TransferTransaction>::fromBytes(bytes);
       
       // auto [index, variant] = Transaction<AccountCreateTransaction>::fromBytes(bytes);
@@ -36,10 +37,6 @@ namespace AccountService {
                     .sign(privateKey.get())
                     .execute(*client)
                 ;
-                std::cout << "executed" << std::endl;
-                TransactionReceipt txReceipt = txResp.getReceipt(*client);
-
-                std::cout << "AccountId: " << txReceipt.mAccountId.value().toString() << std::endl;
                 break;
             }
             default: {

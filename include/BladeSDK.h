@@ -44,11 +44,11 @@ namespace BladeSDK {
             AccountInfoData getAccountInfo(std::string accountId);
             AccountBalanceData getBalance(std::string accountId);
             PrivateKeyData importAccount(std::string seedPhrase, bool lookupAccounts);
-            TransactionReceipt transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo);
-            TransactionReceipt transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer);
+            TxReceipt transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo);
+            TxReceipt transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer);
             SignMessageData sign(std::string message, std::string signerKey, std::string encoding);
             bool signVerify(std::string message, std::string signatureHex, std::string key, std::string encoding);
-
+            TxReceipt contractCallFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee);
     };
 
     int main(int argc, char** argv);

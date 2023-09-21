@@ -1,3 +1,7 @@
+#include "TransactionReceipt.h"
+
+using namespace Hedera;
+
 namespace BladeSDK {
     struct AccountData {
       std::string seedPhrase;
@@ -129,6 +133,19 @@ namespace BladeSDK {
 
     std::ostream& operator<<(std::ostream& os, const SignMessageData& data) {
         os << "{signedMessage: \"" << data.signedMessage << "\"}";
+        return os;
+    }
+
+    struct TxReceipt {
+        std::string transactionId;
+        std::string status;
+        TransactionReceipt transactionReceipt;
+    };
+
+    std::ostream& operator<<(std::ostream& os, const TxReceipt& data) {
+        os << "{transactionId: \"" << data.transactionId << "\", ";
+        os << "status: \"" << data.status << "\", ";
+        os << "transactionReceipt: {Object TransactionReceipt}}";
         return os;
     }
 }
