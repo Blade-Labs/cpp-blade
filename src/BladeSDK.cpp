@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
 
   // std::cout << "transferTokens (paid): " <<  blade.transferTokens("0.0.433870", accountId, privateKeyHex, accountId2, "1", "cpp-sdk-paid-token-transfer", false) << std::endl;
 
-  // std::cout << "transferTokens (free): " <<  blade.transferTokens("0.0.433870", accountId, privateKeyHex, accountId2, "1", "cpp-sdk-free-token-transfer", true) << std::endl;
+  // std::cout << "transferTokens (blade pay): " <<  blade.transferTokens("0.0.433870", accountId, privateKeyHex, accountId2, "1", "cpp-sdk-blade-pay-token-transfer", true) << std::endl;
   
   // // sign + verify
   // std::string message = "hello";
@@ -72,14 +72,13 @@ int main(int argc, char** argv) {
   // std::cout << "Valid?: " << blade.signVerify(messageHex, signature.signedMessage, publicKeyHex, "hex") << std::endl;
 
 
-  // contract call
-  ContractFunctionParameters params = ContractFunctionParameters().addString("cpp-sdk-test [self pay]");
-  std::cout << "Contract call: " << blade.contractCallFunction("0.0.416245", "set_message", params, accountId, privateKeyHex, 150000, false) << std::endl;
+  // contract call [paid]
+  // ContractFunctionParameters params = ContractFunctionParameters().addString("cpp-sdk-test [self pay]");
+  // std::cout << "Contract call: " << blade.contractCallFunction("0.0.416245", "set_message", params, accountId, privateKeyHex, 150000, false) << std::endl;
 
-
-
-
-
+  // contract call [Blade pay]
+  ContractFunctionParameters params = ContractFunctionParameters().addString("cpp-sdk-test [Blade pay]");
+  std::cout << "Contract call: " << blade.contractCallFunction("0.0.416245", "set_message", params, accountId, privateKeyHex, 150000, true) << std::endl;
 
 
 
@@ -99,20 +98,7 @@ int main(int argc, char** argv) {
 
 
 
-            // contract call (Blade pay fee)
-            // ContractFunctionParameters parameters = new ContractFunctionParameters();
-            // parameters.addString("Hello Unity SDK [Blade pay]");
-            // Debug.Log(
-            //     await bladeSdk.contractCallFunction(
-            //         "0.0.416245", 
-            //         "set_message", 
-            //         parameters, 
-            //         "0.0.346533", 
-            //         privateKeyHex, 
-            //         150000,
-            //         true
-            //     )
-            // );
+            // 
 
 
             // contract call query (self pay)
@@ -256,7 +242,7 @@ namespace BladeSDK {
     long long correctedAmount = std::stoull(amount) * std::pow(10, std::stoi(decimals));
 
     if (freeTransfer) {
-      FreeTokenTransferResponse response = apiService.freeTokenTransfer(accountId, receiverId, correctedAmount, memo);
+      BladeTxResponse response = apiService.freeTokenTransfer(accountId, receiverId, correctedAmount, memo);
       std::cout << "response.transactionBytes: " << response.transactionBytes << std::endl;
       const WrappedTransaction tx = Transaction<TransferTransaction>::fromBytes(response.bytes);
       if (tx.getTransactionType() == TransactionType::TRANSFER_TRANSACTION) {
@@ -325,22 +311,41 @@ namespace BladeSDK {
   }
 
   TxReceipt Blade::contractCallFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee) {
-// "0.0.416245", "set_message", parameters, "0.0.346533", privateKeyHex, 150000, false
-
+    std::unique_ptr<PrivateKey> privateKey = ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey);
     Client client = this->getClient();
-    client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey).get());
-
-    TransactionResponse txResp = ContractExecuteTransaction()
-      .setContractId(ContractId(0,0,416245))
-      .setGas(gas)
-      .setFunction(functionName, parameters)
-      .execute(client);
+    client.setOperator(AccountId::fromString(accountId), privateKey.get());
     
-    std::cout << "executed." << std::endl;
+    if (bladePayFee) {
+      BladeTxResponse bladeTxResponse = apiService.signContractCallTx(parameters.toBytes(functionName), contractId, functionName, gas, false);
+      const WrappedTransaction tx = Transaction<TransferTransaction>::fromBytes(bladeTxResponse.bytes);
 
-    TransactionReceipt receipt = txResp.getReceipt(client);
+      if (tx.getTransactionType() == TransactionType::CONTRACT_EXECUTE_TRANSACTION) {
+        ContractExecuteTransaction transaction = *tx.getTransaction<ContractExecuteTransaction>();
 
-    return UtilService::formatReceipt(receipt);
+        TransactionResponse txResp = transaction
+          .sign(privateKey.get())
+          .execute(client);
+
+        std::cout << "executed." << std::endl;
+
+        TransactionReceipt receipt = txResp.getReceipt(client);
+
+        return UtilService::formatReceipt(receipt);
+      }
+      throw std::runtime_error("Failed create ContractExecuteTransaction");
+    } else {
+      TransactionResponse txResp = ContractExecuteTransaction()
+        .setContractId(ContractId(0,0,416245))
+        .setGas(gas)
+        .setFunction(functionName, parameters)
+        .execute(client);
+        
+      std::cout << "executed." << std::endl;
+
+      TransactionReceipt receipt = txResp.getReceipt(client);
+
+      return UtilService::formatReceipt(receipt);
+    }
   }
 
 

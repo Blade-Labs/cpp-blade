@@ -38,7 +38,7 @@ namespace BladeSDK {
         return result;
     }
 
-    FreeTokenTransferResponse ApiService::freeTokenTransfer(std::string accountId, std::string recieverAccount, long long correctedAmount, std::string memo) {
+    BladeTxResponse ApiService::freeTokenTransfer(std::string accountId, std::string recieverAccount, long long correctedAmount, std::string memo) {
         std::string tvte = SecurityService::getTvte(sdkVersion, apiKey);
 
         struct Options options = {
@@ -52,6 +52,29 @@ namespace BladeSDK {
         };
 
         json result = makeRequestPost(apiHost, getPath("/tokens/transfers"), body.dump(), options);
+        
+        std::string transactionBytes = result.value("transactionBytes", "");
+        return {
+          .transactionBytes = transactionBytes,
+          .bytes = UtilService::base64ToVector(transactionBytes),
+        };
+    }
+
+    BladeTxResponse ApiService::signContractCallTx(const std::vector<std::byte>& parameters, std::string contractId, std::string functionName, long long gas, bool contractCallQuery) {
+        std::string tvte = SecurityService::getTvte(sdkVersion, apiKey);
+
+        struct Options options = {
+          .apiKey = apiKey, .visitorId = visitorId, .network = this->network, .dAppCode = dAppCode, .tvte = tvte
+        };
+        json body = {
+          {"functionParametersHash", UtilService::vectorToBase64(parameters)},
+          {"contractId", contractId},
+          {"functionName", functionName},
+          {"gas", gas},
+        };
+
+        std::string action = contractCallQuery ? "call" : "sign";
+        json result = makeRequestPost(apiHost, getPath("/smart/contract/" + action), body.dump(), options);
         
         std::string transactionBytes = result.value("transactionBytes", "");
         return {

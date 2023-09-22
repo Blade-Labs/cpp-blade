@@ -116,12 +116,12 @@ namespace BladeSDK {
         return os;
     }
 
-    struct FreeTokenTransferResponse {
+    struct BladeTxResponse {
         std::string transactionBytes;
         std::vector<std::byte> bytes;
     };
 
-    std::ostream& operator<<(std::ostream& os, const FreeTokenTransferResponse& data) {
+    std::ostream& operator<<(std::ostream& os, const BladeTxResponse& data) {
         os << "{transactionBytes (base64): \"" << data.transactionBytes << "\"}";
         return os;
     }

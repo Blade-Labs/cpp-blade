@@ -15,6 +15,7 @@ namespace BladeSDK {
 namespace UtilService {
     std::string stringToBase64(std::string binaryData);
     std::vector<std::byte> base64ToVector(std::string encoded);
+    std::string vectorToBase64(const std::vector<std::byte>& input);
     std::string vectorToHex(const std::vector<std::byte>& data);
     std::vector<std::byte> hexToVector(const std::string& hexString);
     std::vector<std::byte> stringToVector(const std::string& str);

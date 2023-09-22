@@ -34,6 +34,20 @@ namespace UtilService {
         return output;
     }
 
+    std::string vectorToBase64(const std::vector<std::byte>& input) {
+        std::string inputString;
+        inputString.resize(input.size());
+
+        for (std::size_t i = 0; i < input.size(); i++) {
+            inputString[i] = static_cast<char>(input[i]);
+        }
+        std::string encoded;
+        encoded.resize(boost::beast::detail::base64::encoded_size(inputString.size()));
+
+        std::size_t encodedSize = boost::beast::detail::base64::encode(&encoded[0], inputString.c_str(), inputString.size());
+        encoded.resize(encodedSize);
+        return encoded;
+    }
 
     std::string vectorToHex(const std::vector<std::byte>& data) {
         std::ostringstream oss;
