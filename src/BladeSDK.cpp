@@ -32,11 +32,13 @@ int main(int argc, char** argv) {
 
   std::string accountId = "0.0.346533";
   std::string accountId2 = "0.0.346530";
+  std::string contractId = "0.0.416245";
   std::string privateKeyHex = "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b";
   std::string publicKeyHex = "302d300706052b8104000a032200029dc73991b0d9cdbb59b2cd0a97a0eaff6de801726cb39804ea9461df6be2dd30";
   std::string dAppCode = "unitysdktest";
   std::string apiKey = "Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE";
 
+  // TODO propper error handling
 
   BladeSDK::Blade blade(apiKey, BladeSDK::Network::Testnet, dAppCode, BladeSDK::SdkEnvironment::CI);
   
@@ -74,40 +76,38 @@ int main(int argc, char** argv) {
 
   // contract call [paid]
   // ContractFunctionParameters params = ContractFunctionParameters().addString("cpp-sdk-test [self pay]");
-  // std::cout << "Contract call: " << blade.contractCallFunction("0.0.416245", "set_message", params, accountId, privateKeyHex, 150000, false) << std::endl;
+  // std::cout << "Contract call: " << blade.contractCallFunction(contractId, "set_message", params, accountId, privateKeyHex, 150000, false) << std::endl;
 
   // contract call [Blade pay]
-  ContractFunctionParameters params = ContractFunctionParameters().addString("cpp-sdk-test [Blade pay]");
-  std::cout << "Contract call: " << blade.contractCallFunction("0.0.416245", "set_message", params, accountId, privateKeyHex, 150000, true) << std::endl;
+  // ContractFunctionParameters params = ContractFunctionParameters().addString("cpp-sdk-test [Blade pay]");
+  // std::cout << "Contract call: " << blade.contractCallFunction(contractId, "set_message", params, accountId, privateKeyHex, 150000, true) << std::endl;
+
+
+  // WIP
+  // contract call query (self pay)
+  // ContractFunctionParameters params = ContractFunctionParameters();
+  // std::cout << "Contract call query: " << blade.contractCallQueryFunction(contractId, "get_message", params, accountId, privateKeyHex, 1500000, {"string", "int32"}) << std::endl;
+
+
+  // delete account
+  BladeSDK::AccountData accountOperator = BladeSDK::AccountData {.accountId = accountId, .privateKey = privateKeyHex};
+  BladeSDK::AccountData accountToDelete = BladeSDK::AccountData {.accountId = "0.0.2577306", .privateKey = "3030020100300706052B8104000A04220420AF9B9915BE6A3B4BED77C127679939B5339A20B042196F870DB4191C4C472AF4"};
+  std::cout << "deleteAccount: " << blade.deleteAccount(accountToDelete.accountId, accountToDelete.privateKey, accountOperator.accountId, accountOperator.accountId, accountOperator.privateKey) << std::endl;
+  
 
 
 
-    // delete account
-            // CreateAccountData accountOperator = new CreateAccountData {accountId = "0.0.346533", privateKey = privateKeyHex};
-            // CreateAccountData accountToDelete = new CreateAccountData {accountId = "0.0.486856", privateKey = "3030020100300706052b8104000a04220420ff3ee87eac8651f1aca58570b7aa33b1809bd956f13734d29767e97385cb9f15"};
-
-            // Debug.Log(
-            //     await bladeSdk.deleteAccount(
-            //         accountToDelete.accountId,
-            //         accountToDelete.privateKey,
-            //         accountOperator.accountId, // transferAccountId
-            //         accountOperator.accountId,
-            //         accountOperator.privateKey
-            //     )
-            // );
 
 
-
-            // 
 
 
             // contract call query (self pay)
             // Debug.Log(
             //     await bladeSdk.contractCallQueryFunction(
-            //         "0.0.416245", 
+            //         contractId, 
             //         "get_message", 
             //         new ContractFunctionParameters(), 
-            //         "0.0.346533", 
+            //         accountId, 
             //         privateKeyHex, 
             //         150000, // gas
             //         70000000, // tinybars
@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
             // getParamsSignature
             // ContractFunctionParameters parameters = new ContractFunctionParameters();
             // parameters
-            //     .addAddress("0.0.346533")
+            //     .addAddress(accountId)
             //     .addUInt64Array(new List<ulong> {300000, 300000})
             //     .addUInt64Array(new List<ulong> {6})
             //     .addUInt64Array(new List<ulong> {2})
@@ -142,9 +142,9 @@ int main(int argc, char** argv) {
             // Debug.Log("v: 28, r: '0xe5e662d0564828fd18b2b5b228ade288ad063fadca76812f7902f56cae3e678e', s: '0x61b7ceb82dc6695872289b697a1bca73b81c494288abda29fa022bb7b80c84b5'");
 
             //get transaction history
-            // Debug.Log(await bladeSdk.getTransactions("0.0.346533", "CRYPTOTRANSFER", "", 5));
-            // Debug.Log(await bladeSdk.getTransactions("0.0.346533", "CRYPTOCREATEACCOUNT", "", 20));
-            // Debug.Log(await bladeSdk.getTransactions("0.0.346533", "", nextPage, 5));
+            // Debug.Log(await bladeSdk.getTransactions(accountId, "CRYPTOTRANSFER", "", 5));
+            // Debug.Log(await bladeSdk.getTransactions(accountId, "CRYPTOCREATEACCOUNT", "", 20));
+            // Debug.Log(await bladeSdk.getTransactions(accountId, "", nextPage, 5));
           
 
 
@@ -334,8 +334,10 @@ namespace BladeSDK {
       }
       throw std::runtime_error("Failed create ContractExecuteTransaction");
     } else {
+      auto id = UtilService::splitIdToIntTuple(contractId);
+
       TransactionResponse txResp = ContractExecuteTransaction()
-        .setContractId(ContractId(0,0,416245))
+        .setContractId(ContractId(std::get<0>(id), std::get<1>(id), std::get<2>(id)))
         .setGas(gas)
         .setFunction(functionName, parameters)
         .execute(client);
@@ -348,8 +350,53 @@ namespace BladeSDK {
     }
   }
 
+  // WIP
+  bool Blade::contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId_, std::string accountPrivateKey, long long gas_, std::vector<std::string> returnTypes) {
 
+    // auto id = UtilService::splitIdToIntTuple(contractId);
+    // ContractId contract = ContractId(std::get<0>(id), std::get<1>(id), std::get<2>(id));
+    
+      
+    // std::string accountId = "0.0.346533";
+    // std::string privateKeyHex = "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b";
+    // long long gas = 1500000;
+    // Hbar payment = Hbar(1, HbarUnit::TINYBAR());
 
+    // Client client = this->getClient();
+    // client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(privateKeyHex).get());
+
+    // ContractFunctionResult result = ContractCallQuery()
+    //   .setContractId(ContractId(0, 0, 416245))
+    //   .setGas(gas)
+    //   .setQueryPayment(payment)
+    //   .setMaxQueryPayment(payment)
+    //   .setFunction(functionName, parameters)
+    //   .execute(client);
+
+    // std::cout << "result.getString(0): " << result.getString(0) << std::endl;
+    
+    return false;
+  }
+
+  TxReceipt Blade::deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey) {
+    std::unique_ptr<PrivateKey> deleteAccountKey = ECDSAsecp256k1PrivateKey::fromString(deletePrivateKey);
+    std::unique_ptr<PrivateKey> operatorAccountKey = ECDSAsecp256k1PrivateKey::fromString(operatorPrivateKey);
+    Client client = this->getClient();
+    client.setOperator(AccountId::fromString(operatorAccountId), operatorAccountKey.get());
+
+    TransactionResponse txResp = AccountDeleteTransaction()
+      .setDeleteAccountId(AccountId::fromString(deleteAccountId))
+      .setTransferAccountId(AccountId::fromString(transferAccountId))
+      .freezeWith(&client)
+      .sign(deleteAccountKey.get())
+      .execute(client);
+
+    std::cout << "executed." << std::endl;
+
+    TransactionReceipt receipt = txResp.getReceipt(client);
+
+    return UtilService::formatReceipt(receipt);
+  }
 
   ///////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////

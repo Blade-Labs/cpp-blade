@@ -90,4 +90,26 @@ namespace UtilService {
         };
     }
 
+
+    std::tuple<int, int, int> splitIdToIntTuple(const std::string& input) {
+    int part1 = 0, part2 = 0, part3 = 0;
+
+    size_t firstDot = input.find('.');
+    if (firstDot != std::string::npos) {
+        part1 = std::stoi(input.substr(0, firstDot));
+
+        size_t secondDot = input.find('.', firstDot + 1);
+        if (secondDot != std::string::npos) {
+            part2 = std::stoi(input.substr(firstDot + 1, secondDot - firstDot - 1));
+            part3 = std::stoi(input.substr(secondDot + 1));
+        } else {
+            part2 = std::stoi(input.substr(firstDot + 1));
+        }
+    } else {
+        part1 = std::stoi(input);
+    }
+
+    return std::make_tuple(part1, part2, part3);
+}
+
 }}

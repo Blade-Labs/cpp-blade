@@ -8,6 +8,7 @@
 #include "TransferTransaction.h"
 #include "TransactionReceipt.h"
 #include "TransactionResponse.h"
+#include "ContractCallQuery.h"
 
 #include <iostream>
 #include <string>
@@ -49,6 +50,8 @@ namespace BladeSDK {
             SignMessageData sign(std::string message, std::string signerKey, std::string encoding);
             bool signVerify(std::string message, std::string signatureHex, std::string key, std::string encoding);
             TxReceipt contractCallFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee);
+            bool contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, std::vector<std::string> returnTypes);
+            TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey);
     };
 
     int main(int argc, char** argv);
