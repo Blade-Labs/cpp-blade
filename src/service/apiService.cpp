@@ -88,7 +88,7 @@ namespace BladeSDK {
     }
 
     // Helper function to generate the HTTP request
-    http::request<http::string_body> make_request(
+    http::request<http::string_body> make_request_post(
         const std::string& host, 
         const std::string& target, 
         const std::string& body,
@@ -111,13 +111,21 @@ namespace BladeSDK {
     // Helper function to generate the HTTP request
     http::request<http::string_body> make_request_get(
         const std::string& host, 
-        const std::string& target
+        const std::string& target,
+        struct Options options
     ) {
         http::request<http::string_body> req{ http::verb::get, target, 11 };
         req.set(http::field::host, host);
         req.set(http::field::user_agent, "CPP-Blade");
         req.set(http::field::content_type, "application/json");
         // req.body() = body;
+        if (options.dAppCode != "" && options.visitorId != "") {
+          req.set("X-NETWORK", enumToString(options.network));
+          req.set("X-VISITOR-ID", options.visitorId);
+          req.set("X-DAPP-CODE", options.dAppCode);
+          req.set("X-SDK-TVTE-API", options.tvte);
+        }
+
         req.prepare_payload();
         return req;
     }
@@ -145,7 +153,7 @@ namespace BladeSDK {
             stream.handshake(ssl::stream_base::client);
 
             // Make the HTTP request
-            http::request<http::string_body> req = make_request(apiHost, path, body, options);
+            http::request<http::string_body> req = make_request_post(apiHost, path, body, options);
             http::write(stream, req);
 
             // Receive the HTTP response
@@ -172,7 +180,7 @@ namespace BladeSDK {
     }
 
 
-    json makeRequestGet(std::string apiHost, std::string path) {
+    json makeRequestGet(std::string apiHost, std::string path, struct Options options) {
         net::io_context ioc;
         ssl::context ctx(ssl::context::sslv23_client);
         ctx.set_default_verify_paths();
@@ -192,7 +200,7 @@ namespace BladeSDK {
         stream.handshake(ssl::stream_base::client);
 
         // Make the HTTP request
-        http::request<http::string_body> req = make_request_get(apiHost, path);
+        http::request<http::string_body> req = make_request_get(apiHost, path, options);
         http::write(stream, req);
 
         // Receive the HTTP response
@@ -216,7 +224,7 @@ namespace BladeSDK {
     json ApiService::GET(std::string route) {
       std::string apiHost = getMirrorNodeHost(network);
       // std::cout << getMirrorNodeHost(network) << route << std::endl;
-      return makeRequestGet(getMirrorNodeHost(network), route);
+      return makeRequestGet(getMirrorNodeHost(network), route, {});
     }
 
     AccountBalanceData ApiService::getBalance(std::string accountId) {
@@ -256,11 +264,20 @@ namespace BladeSDK {
       return result;
     }
     
+    std::string ApiService::getClientId() {
+      std::string tvte = SecurityService::getTvte(sdkVersion, apiKey);
+      struct Options options = {
+        .apiKey = apiKey, .visitorId = visitorId, .network = this->network, .dAppCode = dAppCode, .tvte = tvte
+      };
+
+      json resoponse = makeRequestGet(apiHost, this->getPath("/c14/data"), options);
+      return resoponse.value("token", "");
+    }
 
     std::string ApiService::getFingerprintApiKey() {    
       // TODO use in future
 
-      json resoponse = makeRequestGet(apiHost, this->getPath("/sdk/config"));
+      json resoponse = makeRequestGet(apiHost, this->getPath("/sdk/config"), {});
       return resoponse.value("fpAp11iKey", "default api keys fallabck");
     }
 

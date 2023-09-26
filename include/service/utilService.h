@@ -21,6 +21,8 @@ namespace UtilService {
     std::vector<std::byte> stringToVector(const std::string& str);
     TxReceipt formatReceipt(TransactionReceipt receipt);
     std::tuple<int, int, int> splitIdToIntTuple(const std::string& input);
+    std::string toUpperCase(const std::string& str);
+    bool isUUID(const std::string& str);
 }}
 
 #endif // BLADE_SERVICE_UTIL_H_

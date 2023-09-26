@@ -46,6 +46,7 @@ namespace BladeSDK {
             AccountBalanceData getBalance(std::string accountId);
             std::vector<std::string> getAccountsFromPublicKey(std::string publicKey);
             std::string getFingerprintApiKey();
+            std::string getClientId();
     };
     
 

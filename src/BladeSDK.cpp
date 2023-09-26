@@ -90,36 +90,13 @@ int main(int argc, char** argv) {
 
 
   // delete account
-  BladeSDK::AccountData accountOperator = BladeSDK::AccountData {.accountId = accountId, .privateKey = privateKeyHex};
-  BladeSDK::AccountData accountToDelete = BladeSDK::AccountData {.accountId = "0.0.2577306", .privateKey = "3030020100300706052B8104000A04220420AF9B9915BE6A3B4BED77C127679939B5339A20B042196F870DB4191C4C472AF4"};
-  std::cout << "deleteAccount: " << blade.deleteAccount(accountToDelete.accountId, accountToDelete.privateKey, accountOperator.accountId, accountOperator.accountId, accountOperator.privateKey) << std::endl;
+  // BladeSDK::AccountData accountOperator = BladeSDK::AccountData {.accountId = accountId, .privateKey = privateKeyHex};
+  // BladeSDK::AccountData accountToDelete = BladeSDK::AccountData {.accountId = "0.0.2577306", .privateKey = "3030020100300706052B8104000A04220420AF9B9915BE6A3B4BED77C127679939B5339A20B042196F870DB4191C4C472AF4"};
+  // std::cout << "deleteAccount: " << blade.deleteAccount(accountToDelete.accountId, accountToDelete.privateKey, accountOperator.accountId, accountOperator.accountId, accountOperator.privateKey) << std::endl;
   
+  // get C14 url
+  std::cout << "c14 url: " << blade.getC14url("karate", "0.0.123456", "1234") << std::endl;
 
-
-
-
-
-
-
-            // contract call query (self pay)
-            // Debug.Log(
-            //     await bladeSdk.contractCallQueryFunction(
-            //         contractId, 
-            //         "get_message", 
-            //         new ContractFunctionParameters(), 
-            //         accountId, 
-            //         privateKeyHex, 
-            //         150000, // gas
-            //         70000000, // tinybars
-            //         new List<string> {"string", "int32"}
-            //     )
-            // );
-
-            // C14 url
-            // Debug.Log(
-            //     await bladeSdk.getC14url("karate", "0.0.123456", "1234")
-            // );
-            
            
             // hethersSign
             // Debug.Log(await bladeSdk.hethersSign("hello", privateKeyHex, "utf8"));
@@ -357,23 +334,24 @@ namespace BladeSDK {
     // ContractId contract = ContractId(std::get<0>(id), std::get<1>(id), std::get<2>(id));
     
       
-    // std::string accountId = "0.0.346533";
-    // std::string privateKeyHex = "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b";
-    // long long gas = 1500000;
-    // Hbar payment = Hbar(1, HbarUnit::TINYBAR());
+    std::string accountId = "0.0.346533";
+    std::string privateKeyHex = "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b";
+    long long gas = 15000000;
+    Hbar payment = Hbar(9999999999999, HbarUnit::HBAR());
 
-    // Client client = this->getClient();
-    // client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(privateKeyHex).get());
+    Client client = this->getClient();
+    client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(privateKeyHex).get());
 
-    // ContractFunctionResult result = ContractCallQuery()
-    //   .setContractId(ContractId(0, 0, 416245))
-    //   .setGas(gas)
-    //   .setQueryPayment(payment)
-    //   .setMaxQueryPayment(payment)
-    //   .setFunction(functionName, parameters)
-    //   .execute(client);
+    ContractFunctionResult result = ContractCallQuery()
+      .setContractId(ContractId(0, 0, 416245))
+      .setGas(gas)
+      .setQueryPayment(payment)
+    
+      .setMaxQueryPayment(payment)
+      .setFunction(functionName, parameters)
+      .execute(client);
 
-    // std::cout << "result.getString(0): " << result.getString(0) << std::endl;
+    std::cout << "result.getString(0): " << result.getString(0) << std::endl;
     
     return false;
   }
@@ -396,6 +374,50 @@ namespace BladeSDK {
     TransactionReceipt receipt = txResp.getReceipt(client);
 
     return UtilService::formatReceipt(receipt);
+  }
+
+  std::string Blade::getC14url(std::string asset, std::string account, std::string amount) {
+    std::string clientId = apiService.getClientId();
+    asset = UtilService::toUpperCase(asset);
+    std::vector<std::string> params = {"clientId=" + clientId};
+    
+    std::string targetAssetId = "";
+    if (asset == "USDC") {
+      targetAssetId = "b0694345-1eb4-4bc4-b340-f389a58ee4f3";
+    } else if (asset == "HBAR") {
+      targetAssetId = "d9b45743-e712-4088-8a31-65ee6f371022";
+    } else if (asset == "KARATE") {
+      targetAssetId = "057d6b35-1af5-4827-bee2-c12842faa49e";
+    } else if (UtilService::isUUID(asset)) {
+      targetAssetId = asset;
+    }
+    if (targetAssetId != "") {
+      params.push_back("targetAssetId=" + targetAssetId);
+      params.push_back("targetAssetIdLock=true");
+    }
+
+
+    if (amount != "") {
+      params.push_back("sourceAmount=" + amount);
+      params.push_back("quoteAmountLock=true");
+    }
+
+    if (account != "") {
+      params.push_back("targetAddress=" + account);
+      params.push_back("targetAddressLock=true");
+    }
+
+    std::string url = "https://pay.c14.money/?";
+    for (auto it = params.begin(); it != params.end(); ++it) {
+      const std::string& param = *it;
+      url += param;
+
+      if (std::next(it) != params.end()) {
+        url += "&";
+      }
+    }
+
+    return url;
   }
 
   ///////////////////////////////////////////////////////////////////////////
