@@ -19,7 +19,15 @@ namespace UtilService {
         return encodedData;
     }
 
-    // todo base64ToString
+    std::string base64ToString(const std::string& base64Data) {
+        // Convert base64-encoded string to a vector of bytes
+        std::vector<std::byte> binaryData = base64ToVector(base64Data);
+
+        // Create a string from the vector of bytes
+        std::string result(reinterpret_cast<const char*>(binaryData.data()), binaryData.size());
+
+        return result;
+    }
 
     std::vector<std::byte> base64ToVector(std::string encoded) {
         std::string decoded;
@@ -127,4 +135,93 @@ namespace UtilService {
         return std::regex_match(str, uuidPattern);
     }
 
+
+    std::vector<TransactionData> formatTransactionData(json transactionsHistory, std::string accountId) {
+        std::vector<TransactionData> result = {};
+
+        if (transactionsHistory.contains("transactions") && transactionsHistory["transactions"].is_array()) {
+            for (const auto& record : transactionsHistory["transactions"]) {
+
+                std::vector<TransferData> transfers = {};
+                std::vector<TransactionHistoryNftTransfer> nftTransfers;
+
+                if (record.contains("transfers") && record["transfers"].is_array()) {
+                    for (const auto& transfer : record["transfers"]) {
+                        TransferData transferData = TransferData {
+                            .amount = transfer["amount"].get<long long>(),
+                            .account = transfer["account"].get<std::string>(),
+                        };
+                        transfers.push_back(transferData);
+                    }
+                }
+
+                if (record.contains("token_transfers") && record["token_transfers"].is_array()) {
+                    for (const auto& transfer : record["token_transfers"]) {
+                        TransferData transferData = TransferData {
+                            .amount = transfer["amount"].get<long long>(),
+                            .account = transfer["account"].get<std::string>(),
+                            .token_id = transfer["token_id"].get<std::string>()
+                        };
+                        transfers.push_back(transferData);
+                    }
+                }
+
+                if (record.contains("nftTransfers") && record["nftTransfers"].is_array()) {
+                    for (const auto& transfer : record["nftTransfers"]) {
+                        TransactionHistoryNftTransfer transferData = TransactionHistoryNftTransfer {
+                            .receiver_account_id = transfer["receiver_account_id"].get<std::string>(),
+                            .sender_account_id = transfer["sender_account_id"].get<std::string>(),
+                            .serial_number = transfer["serial_number"].get<uint>(),
+                            .token_id = transfer["token_id"].get<std::string>(),
+                        };
+                        nftTransfers.push_back(transferData);
+                    }
+                }
+
+                TransactionData transaction = TransactionData {
+                    .consensusTimestamp = record["consensus_timestamp"].get<std::string>(),
+                    .fee = record["charged_tx_fee"].get<long long>(),
+                    .memo = base64ToString(record["memo_base64"].get<std::string>()),
+                    .nftTransfers  = nftTransfers,
+                    .transfers = transfers,
+                    .showDetailed = false,
+                    .transactionId = record["transaction_id"].get<std::string>(),
+                    .type = record["name"].get<std::string>(),
+                };
+                result.push_back(transaction);
+                
+            }
+        } else {
+            std::cout << "\"transactions\" not found or not an array." << std::endl;
+        }
+        return result;
+    }
+
+    std::vector<TransactionData> filterAndFormatTransactions(std::vector<TransactionData> transactions, std::string transactionType) {
+        if (transactionType == "") {
+            return transactions;
+        }
+
+        std::vector<TransactionData> result = {};
+        for (const auto& tx : transactions) {
+            if (tx.type == transactionType) {
+                result.push_back(tx);
+            }
+        }
+
+        return result;
+    }
+
+    template <typename T>
+    std::vector<T> slice(const std::vector<T>& input, std::size_t start, std::size_t end) {
+        if (start >= input.size()) {
+            return std::vector<T>(); // Return an empty vector if start is out of range
+        }
+
+        if (end > input.size()) {
+            end = input.size(); // Adjust end to avoid going out of range
+        }
+
+        return std::vector<T>(input.begin() + start, input.begin() + end);
+    }
 }}

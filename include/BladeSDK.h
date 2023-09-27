@@ -53,6 +53,7 @@ namespace BladeSDK {
             bool contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, std::vector<std::string> returnTypes);
             TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey);
             std::string getC14url(std::string asset, std::string account, std::string amount);
+            TransactionsHistoryData getTransactions(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit);
     };
 
     int main(int argc, char** argv);

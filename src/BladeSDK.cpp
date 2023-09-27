@@ -94,8 +94,25 @@ int main(int argc, char** argv) {
   // BladeSDK::AccountData accountToDelete = BladeSDK::AccountData {.accountId = "0.0.2577306", .privateKey = "3030020100300706052B8104000A04220420AF9B9915BE6A3B4BED77C127679939B5339A20B042196F870DB4191C4C472AF4"};
   // std::cout << "deleteAccount: " << blade.deleteAccount(accountToDelete.accountId, accountToDelete.privateKey, accountOperator.accountId, accountOperator.accountId, accountOperator.privateKey) << std::endl;
   
+  
   // get C14 url
-  std::cout << "c14 url: " << blade.getC14url("karate", "0.0.123456", "1234") << std::endl;
+  // std::cout << "c14 url: " << blade.getC14url("karate", "0.0.123456", "1234") << std::endl;
+
+
+  //get transaction history
+  BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTOTRANSFER", "/api/v1/transactions?account.id=0.0.346533&limit=25&timestamp=lt:1695395474.219548003", 5);
+  std::cout << "getTransactions (CRYPTOTRANSFER)[" << history.transactions.size() << "]: " << history << std::endl;
+
+  // BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTOCREATEACCOUNT", "", 5);
+  // std::cout << "getTransactions (CRYPTOCREATEACCOUNT)[" << history.transactions.size() << "]: " << history << std::endl;
+
+  // BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTODELETE", "", 2);
+  // std::cout << "getTransactions (CRYPTODELETE)[" << history.transactions.size() << "]: " << history << std::endl;
+  
+
+
+
+
 
            
             // hethersSign
@@ -117,15 +134,6 @@ int main(int argc, char** argv) {
             // ;
             // Debug.Log(await bladeSdk.getParamsSignature(parameters, privateKeyHex));
             // Debug.Log("v: 28, r: '0xe5e662d0564828fd18b2b5b228ade288ad063fadca76812f7902f56cae3e678e', s: '0x61b7ceb82dc6695872289b697a1bca73b81c494288abda29fa022bb7b80c84b5'");
-
-            //get transaction history
-            // Debug.Log(await bladeSdk.getTransactions(accountId, "CRYPTOTRANSFER", "", 5));
-            // Debug.Log(await bladeSdk.getTransactions(accountId, "CRYPTOCREATEACCOUNT", "", 20));
-            // Debug.Log(await bladeSdk.getTransactions(accountId, "", nextPage, 5));
-          
-
-
-
 }
 
 namespace BladeSDK {
@@ -419,6 +427,12 @@ namespace BladeSDK {
 
     return url;
   }
+
+  TransactionsHistoryData Blade::getTransactions(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit) {
+    return apiService.getTransactionsFrom(accountId, transactionType, nextPage, transactionsLimit);
+  }
+
+
 
   ///////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////

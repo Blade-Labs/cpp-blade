@@ -83,6 +83,63 @@ namespace BladeSDK {
         };
     }
 
+    TransactionsHistoryData ApiService::getTransactionsFrom(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit) {
+      int pageLimit = transactionsLimit >= 100 ? 100 : 25;
+      std::vector<TransactionData> result = {};
+    
+      while (result.size() < transactionsLimit) {
+        std::string url = nextPage == "" ? "/api/v1/transactions/?account.id=" + accountId + "&limit=" + std::to_string(pageLimit) : nextPage;
+        json info = GET(url);  
+
+        std::vector<TransactionData> transactions = {};
+        if (info.contains("transactions") && info["transactions"].is_array()) {
+            for (const auto& record : info["transactions"]) {
+              std::string transaction_id = record["transaction_id"].get<std::string>();
+              std::vector<TransactionData> formattedTransactions = UtilService::formatTransactionData(
+                GET("/api/v1/transactions/" + transaction_id),
+                accountId
+              );
+              for (auto it = formattedTransactions.begin(); it != formattedTransactions.end(); ++it) {
+                  transactions.push_back(*it);
+              }
+            }
+        } else {
+            std::cout << "\"transactions\" not found or not an array." << std::endl;
+        }
+
+        std::sort(transactions.begin(), transactions.end(),
+            [](const TransactionData& a, const TransactionData& b) {
+                return a.consensusTimestamp > b.consensusTimestamp;
+            }
+        );
+
+        transactions = UtilService::filterAndFormatTransactions(transactions, transactionType);        
+        for (auto it = transactions.begin(); it != transactions.end(); ++it) {
+          result.push_back(*it);
+        }
+
+        if (!info["links"]["next"].is_null()) {
+            nextPage = info["links"].value("next", "");
+        } else {
+            nextPage = "";
+        }
+
+        if (nextPage == "" || result.size() >= transactionsLimit) {
+          break;
+        }
+      }
+
+      if (result.size() > transactionsLimit) {
+          nextPage = "/api/v1/transactions?account.id=" + accountId + "&limit=" + std::to_string(pageLimit) + "&timestamp=lt:" + result[transactionsLimit-1].consensusTimestamp;
+          result = UtilService::slice(result, 0, transactionsLimit);
+      }
+
+      return TransactionsHistoryData {
+          .transactions = result,
+          .nextPage = nextPage
+      }; 
+    }
+
     void ApiService::setVisitorId(std::string visitorId) {
       this->visitorId = visitorId;
     }
@@ -166,8 +223,10 @@ namespace BladeSDK {
 
             if (res.result_int() != 200)
             {
-              std::cout << "HTTP response: " << res.result_int() << std::endl;
+              std::cout << "HTTP ERROR: " << res.result_int() << std::endl;
+              std::cout << "URL: " << apiHost << path << std::endl;
               std::cout << "HTTP message: " << res << std::endl;
+              std::cout << "BODY: " << boost::beast::buffers_to_string(res.body().data()) << std::endl;
               throw;
             }
 
@@ -210,8 +269,10 @@ namespace BladeSDK {
 
         if (res.result_int() != 200)
         {
-          std::cout << "HTTP response: " << res.result_int() << std::endl;
+          std::cout << "HTTP ERROR: " << res.result_int() << std::endl;
+          std::cout << "URL: " << apiHost << path << std::endl;
           std::cout << "HTTP message: " << res << std::endl;
+          std::cout << "BODY: " << boost::beast::buffers_to_string(res.body().data()) << std::endl;
           throw;
         }
 
@@ -223,7 +284,7 @@ namespace BladeSDK {
 
     json ApiService::GET(std::string route) {
       std::string apiHost = getMirrorNodeHost(network);
-      // std::cout << getMirrorNodeHost(network) << route << std::endl;
+      // std::cout << apiHost << route << std::endl;
       return makeRequestGet(getMirrorNodeHost(network), route, {});
     }
 
@@ -237,7 +298,7 @@ namespace BladeSDK {
 
     std::vector<TokenBalance> ApiService::getAccountTokens(std::string accountId) {
       std::vector<TokenBalance> result = {};
-      std::string nextPage = "/api/v1/accounts/" + accountId + "/tokens?limit=2";
+      std::string nextPage = "/api/v1/accounts/" + accountId + "/tokens";
   
       while (nextPage != "") {
         json response = GET(nextPage);

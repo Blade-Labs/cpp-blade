@@ -14,6 +14,7 @@ using namespace Hedera;
 namespace BladeSDK {
 namespace UtilService {
     std::string stringToBase64(std::string binaryData);
+    std::string base64ToString(const std::string& base64Data);
     std::vector<std::byte> base64ToVector(std::string encoded);
     std::string vectorToBase64(const std::vector<std::byte>& input);
     std::string vectorToHex(const std::vector<std::byte>& data);
@@ -23,6 +24,9 @@ namespace UtilService {
     std::tuple<int, int, int> splitIdToIntTuple(const std::string& input);
     std::string toUpperCase(const std::string& str);
     bool isUUID(const std::string& str);
+    std::vector<TransactionData> formatTransactionData(nlohmann::json transactionsHistory, std::string accountId);
+    std::vector<TransactionData> filterAndFormatTransactions(std::vector<TransactionData> transactions, std::string transactionType);
+    template <typename T> std::vector<T> slice(const std::vector<T>& input, std::size_t start, std::size_t end);
 }}
 
 #endif // BLADE_SERVICE_UTIL_H_

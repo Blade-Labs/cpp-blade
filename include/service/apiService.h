@@ -44,6 +44,7 @@ namespace BladeSDK {
             
             json GET(std::string route);
             AccountBalanceData getBalance(std::string accountId);
+            TransactionsHistoryData getTransactionsFrom(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit);
             std::vector<std::string> getAccountsFromPublicKey(std::string publicKey);
             std::string getFingerprintApiKey();
             std::string getClientId();
