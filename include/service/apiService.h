@@ -19,7 +19,6 @@ namespace BladeSDK {
     namespace net = boost::asio;
     namespace ssl = net::ssl;
     using json = nlohmann::json;
-    
 
     class ApiService {
         private:
@@ -35,6 +34,8 @@ namespace BladeSDK {
             std::string getMirrorNodeHost(Network network);
             std::vector<TokenBalance> getAccountTokens(std::string accountId);
             void registerDevice();
+            json makeRequestGet(std::string apiHost, std::string path, struct Options options);
+            json makeRequestPost(std::string apiHost, std::string path, std::string body, struct Options options);
 
         public:
             ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment);
@@ -42,38 +43,12 @@ namespace BladeSDK {
             json createAccount(std::shared_ptr<PublicKey> publicKey);
             BladeTxResponse freeTokenTransfer(std::string accountId, std::string recieverAccount, long long correctedAmount, std::string memo);
             BladeTxResponse signContractCallTx(const std::vector<std::byte>& parameters, std::string contractId, std::string functionName, long long gas, bool contractCallQuery);
-            
             json GET(std::string route);
             AccountBalanceData getBalance(std::string accountId);
             TransactionsHistoryData getTransactionsFrom(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit);
             std::vector<std::string> getAccountsFromPublicKey(std::string publicKey);
-            std::string getFingerprintApiKey();
             std::string getClientId();
     };
-    
-
-    void performHttpsGetRequest(const std::string& host, const std::string& target);
-
-    std::string getAccountsFromPublicKey(
-        std::shared_ptr<PublicKey> publicKey,
-        std::string network
-    );
-
-    json makeRequestPost(
-        std::string apiHost,
-        std::string path,
-        std::string body,
-        struct Options options
-    );
-
-    // Helper function to generate the HTTP request
-    http::request<http::string_body> make_request(
-        const std::string& host, 
-        const std::string& target, 
-        const std::string& body,
-        struct Options options
-    );
-
 }
 
 #endif // BLADE_SERVICE_API_H_

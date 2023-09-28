@@ -3,9 +3,6 @@
 #include "ECDSAsecp256k1PrivateKey.h"
 #include "ED25519PrivateKey.h"
 #include "MnemonicBIP39.h"
-
-
-
 #include "Client.h"
 #include "AccountCreateTransaction.h"
 #include "TransactionReceipt.h"
@@ -22,11 +19,7 @@
 #include "service/utilService.cpp"
 #include "service/fingerprintService.cpp"
 
-std::string apiHost = "api.bld-dev.bladewallet.io";
-std::string apiPath = "/openapi/v7";
-
 using namespace Hedera;
-
 
 int main(int argc, char** argv) {
   std::cout << "Blade-SDK example:" << std::endl;
@@ -441,18 +434,5 @@ namespace BladeSDK {
       return Client::forTestnet();
     }
   }
-
-
-
-
-
-  // void printVec(std::vector<std::byte> vec) {
-  //   for (int i = 0; i < vec.size(); ++i)
-  //   {
-  //     std::cout << (int)vec[i] << " ";
-  //   }
-  //   std::cout << std::endl;  
-  // }
-
 }
 
