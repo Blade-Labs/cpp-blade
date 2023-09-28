@@ -224,4 +224,22 @@ namespace UtilService {
 
         return std::vector<T>(input.begin() + start, input.begin() + end);
     }
+
+    std::vector<std::string> splitString(const std::string& input, char delimiter) {
+        std::vector<std::string> parts;
+        std::string part;
+
+        for (char c : input) {
+            if (c == delimiter) {
+                parts.push_back(part);
+                part.clear();
+            } else {
+                part += c;
+            }
+        }
+        parts.push_back(part);
+        return parts;
+    }
+
+
 }}

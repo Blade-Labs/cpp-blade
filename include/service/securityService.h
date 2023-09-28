@@ -19,6 +19,7 @@ namespace BladeSDK {
 namespace SecurityService {
 	std::string encrypt(const std::string& data, const std::string& token);
     std::string getTvte(const std::string& sdkVersion, const std::string& token);
+    std::string getVte(const std::string& visitorId, const std::string& token);
     std::string generateRandomString(int length);
 }}
 

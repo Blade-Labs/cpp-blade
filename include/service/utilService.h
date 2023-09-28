@@ -27,6 +27,7 @@ namespace UtilService {
     std::vector<TransactionData> formatTransactionData(nlohmann::json transactionsHistory, std::string accountId);
     std::vector<TransactionData> filterAndFormatTransactions(std::vector<TransactionData> transactions, std::string transactionType);
     template <typename T> std::vector<T> slice(const std::vector<T>& input, std::size_t start, std::size_t end);
+    std::vector<std::string> splitString(const std::string& input, char delimiter);
 }}
 
 #endif // BLADE_SERVICE_UTIL_H_

@@ -20,6 +20,7 @@
 #include "service/accountService.cpp"
 #include "service/securityService.cpp"
 #include "service/utilService.cpp"
+#include "service/fingerprintService.cpp"
 
 std::string apiHost = "api.bld-dev.bladewallet.io";
 std::string apiPath = "/openapi/v7";
@@ -38,11 +39,15 @@ int main(int argc, char** argv) {
   std::string dAppCode = "unitysdktest";
   std::string apiKey = "Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE";
 
-  // TODO propper error handling
+  // TODO:
+  // - propper error handling
+  // - hethersSign
+  // - splitSignature
+  // - getParamsSignature
 
   BladeSDK::Blade blade(apiKey, BladeSDK::Network::Testnet, dAppCode, BladeSDK::SdkEnvironment::CI);
   
-  // std::cout << "createAccountBlade: " << blade.createAccountBlade() << std::endl;
+  std::cout << "createAccountBlade: " << blade.createAccountBlade() << std::endl;
   
   // std::cout << "getAccountInfo: " << blade.getAccountInfo(accountId) << std::endl;
 
@@ -100,8 +105,8 @@ int main(int argc, char** argv) {
 
 
   //get transaction history
-  BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTOTRANSFER", "/api/v1/transactions?account.id=0.0.346533&limit=25&timestamp=lt:1695395474.219548003", 5);
-  std::cout << "getTransactions (CRYPTOTRANSFER)[" << history.transactions.size() << "]: " << history << std::endl;
+  // BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTOTRANSFER", "/api/v1/transactions?account.id=0.0.346533&limit=25&timestamp=lt:1695395474.219548003", 5);
+  // std::cout << "getTransactions (CRYPTOTRANSFER)[" << history.transactions.size() << "]: " << history << std::endl;
 
   // BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTOCREATEACCOUNT", "", 5);
   // std::cout << "getTransactions (CRYPTOCREATEACCOUNT)[" << history.transactions.size() << "]: " << history << std::endl;
@@ -110,44 +115,19 @@ int main(int argc, char** argv) {
   // std::cout << "getTransactions (CRYPTODELETE)[" << history.transactions.size() << "]: " << history << std::endl;
   
 
-
-
-
-
-           
-            // hethersSign
-            // Debug.Log(await bladeSdk.hethersSign("hello", privateKeyHex, "utf8"));
-            // Debug.Log("0x25de7c26ecfa4f28d8b96a95cf58ea7088a72a66b311c796090cb4c7d58c11217b4a7b174b4c31b90c3babb00958b2120274380404c4f1196abe3614df3741561b");
-
-            // splitSignature
-            // Debug.Log(await bladeSdk.splitSignature("0x25de7c26ecfa4f28d8b96a95cf58ea7088a72a66b311c796090cb4c7d58c11217b4a7b174b4c31b90c3babb00958b2120274380404c4f1196abe3614df3741561b"));
-            // Debug.Log("v: 27, r: '0x25de7c26ecfa4f28d8b96a95cf58ea7088a72a66b311c796090cb4c7d58c1121', s: '0x7b4a7b174b4c31b90c3babb00958b2120274380404c4f1196abe3614df374156'");
-  
-
-            // getParamsSignature
-            // ContractFunctionParameters parameters = new ContractFunctionParameters();
-            // parameters
-            //     .addAddress(accountId)
-            //     .addUInt64Array(new List<ulong> {300000, 300000})
-            //     .addUInt64Array(new List<ulong> {6})
-            //     .addUInt64Array(new List<ulong> {2})
-            // ;
-            // Debug.Log(await bladeSdk.getParamsSignature(parameters, privateKeyHex));
-            // Debug.Log("v: 28, r: '0xe5e662d0564828fd18b2b5b228ade288ad063fadca76812f7902f56cae3e678e', s: '0x61b7ceb82dc6695872289b697a1bca73b81c494288abda29fa022bb7b80c84b5'");
 }
 
 namespace BladeSDK {
   Blade::Blade(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment)
-    : apiService(apiKey, network, dAppCode, sdkEnvironment, sdkVersion)
+    : apiService(apiKey, network, dAppCode, sdkEnvironment)
   {
     this->network = network;
     this->apiKey = apiKey;
     this->dAppCode = dAppCode;
     this->sdkEnvironment = sdkEnvironment;
 
-    // TODO get visitorId from fingerprint
-    // TODO register device
-    apiService.setVisitorId(this->visitorId);
+    FingerprintService fingerprintService = FingerprintService();
+    apiService.init(this->sdkVersion, fingerprintService.getVisitorId());
   }
 
   AccountData Blade::createAccountBlade() {

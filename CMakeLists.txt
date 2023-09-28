@@ -80,6 +80,12 @@ target_sources(blade-cpp PRIVATE "src")
 if (APPLE)
     # target_link_libraries(${PROJECT_NAME} PRIVATE ${OSX_CORE_FOUNDATION})
     # target_link_libraries(${PROJECT_NAME} PRIVATE ${OSX_CF_NETWORK})
+
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE 
+        "-framework CoreFoundation"
+        "-framework IOKit"   
+    )
 endif ()
 
 if (NOT WIN32)

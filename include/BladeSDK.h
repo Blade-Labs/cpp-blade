@@ -19,6 +19,7 @@
 #include "service/apiService.h"
 #include "service/accountService.h"
 #include "service/securityService.h"
+#include "service/fingerprintService.h"
 
 using namespace Hedera;
 using json = nlohmann::json;
@@ -28,12 +29,12 @@ namespace BladeSDK {
     class Blade {
         private:
             ApiService apiService;
-            std::string apiKey = "Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE";
-            Network network = Network::Testnet;
-            std::string dAppCode = "unitysdktest";
-            std::string visitorId = "BC238E19-6B3D-5CFC-A26A-21499FF7C25E";
+            std::string apiKey;
+            Network network;
+            std::string dAppCode;
+            std::string visitorId;
             std::string sdkVersion = "Unity@0.6.4";
-            SdkEnvironment sdkEnvironment = SdkEnvironment::CI; // "CI";
+            SdkEnvironment sdkEnvironment;
             
             Client getClient();
             MnemonicBIP39 getMnemonic();

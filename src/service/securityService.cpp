@@ -10,14 +10,22 @@ namespace SecurityService {
     const int MAGIC_IV_INDEX = 3;
 
     std::string getTvte(const std::string& sdkVersion, const std::string& token) {
-        // todo get data from sdkVersion      
-        std::string platform = "Unity";
-        std::string version = "0.6.4";
+        std::vector<std::string> parts = UtilService::splitString(sdkVersion, '@');
+        if (parts.size() != 2) {
+            std::cerr << "Invalid sdkVersion: " << sdkVersion << std::endl;
+            return "";
+        }
+
+        std::string platform = parts[0];
+        std::string version = parts[1];
         std::time_t timestamp = std::time(nullptr);
         return platform + "@" + encrypt(version + "@" + std::to_string(timestamp * 1000), token);
     }
 
-
+    std::string getVte(const std::string& visitorId, const std::string& token) {
+        std::time_t timestamp = std::time(nullptr);
+        return encrypt(visitorId + "@" + std::to_string(timestamp * 1000), token);
+    }
     
     std::string encrypt(const std::string& data, const std::string& token) {
         std::string ivStr = generateRandomString(CIPHER_IV_LENGTH);

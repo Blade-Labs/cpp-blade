@@ -11,7 +11,7 @@ namespace BladeSDK {
     namespace ssl = boost::asio::ssl;
 
 
-    ApiService::ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment, const std::string& sdkVersion) {
+    ApiService::ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment) {
         this->apiKey = apiKey;
         this->network = network;
         this->dAppCode = dAppCode;
@@ -140,8 +140,23 @@ namespace BladeSDK {
       }; 
     }
 
-    void ApiService::setVisitorId(std::string visitorId) {
+    void ApiService::init(std::string sdkVersion, std::string visitorId) {
+      this->sdkVersion = sdkVersion;
       this->visitorId = visitorId;
+      this->registerDevice();
+    }
+
+    void ApiService::registerDevice() {
+        std::string tvte = SecurityService::getTvte(sdkVersion, apiKey);
+        std::string vte = SecurityService::getVte(visitorId, apiKey);
+
+        struct Options options = {
+          .apiKey = apiKey, .visitorId = visitorId, .network = this->network, .dAppCode = dAppCode, .tvte = tvte
+        };
+        json body = {
+          {"vte", vte}
+        };
+        makeRequestPost(apiHost, getPath("/sdk/config/vte"), body.dump(), options);
     }
 
     // Helper function to generate the HTTP request
@@ -230,7 +245,8 @@ namespace BladeSDK {
               throw;
             }
 
-            json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
+            std::string response = boost::beast::buffers_to_string(res.body().data());
+            json result = response != "" ? nlohmann::json::parse(response) : nlohmann::json::object();
             return result;
         } catch (const std::exception& e) {
             std::cerr << "Error: " << e.what() << std::endl;

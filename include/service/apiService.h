@@ -23,21 +23,22 @@ namespace BladeSDK {
 
     class ApiService {
         private:
-            std::string apiHost = "api.bld-dev.bladewallet.io";
-            std::string apiKey = "";
+            std::string apiHost;
+            std::string apiKey;
             Network network;
-            std::string dAppCode = "";
-            std::string visitorId = "";
-            std::string sdkVersion = "";
+            std::string dAppCode;
+            std::string visitorId;
+            std::string sdkVersion;
             SdkEnvironment sdkEnvironment;
 
             std::string getPath(std::string path);
             std::string getMirrorNodeHost(Network network);
             std::vector<TokenBalance> getAccountTokens(std::string accountId);
+            void registerDevice();
 
         public:
-            ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment, const std::string& sdkVersion);
-            void setVisitorId(std::string visitorId);
+            ApiService(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment);
+            void init(std::string sdkVersion, std::string visitorId);
             json createAccount(std::shared_ptr<PublicKey> publicKey);
             BladeTxResponse freeTokenTransfer(std::string accountId, std::string recieverAccount, long long correctedAmount, std::string memo);
             BladeTxResponse signContractCallTx(const std::vector<std::byte>& parameters, std::string contractId, std::string functionName, long long gas, bool contractCallQuery);
