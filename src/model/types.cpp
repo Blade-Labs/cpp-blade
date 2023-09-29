@@ -1,4 +1,3 @@
-#include "TransactionReceipt.h"
 
 using namespace Hedera;
 
@@ -20,15 +19,6 @@ namespace BladeSDK {
         return os.str();
     }
 
-
-    struct AccountData {
-      std::string seedPhrase;
-      std::string publicKey;
-      std::string privateKey;
-      std::string accountId;
-    };
-
-    // Overload the << operator for AccountData
     std::ostream& operator<<(std::ostream& os, const AccountData& account) {
         os << "{seedPhrase: \"" << account.seedPhrase << "\", ";
         os << "publicKey: \"" << account.publicKey << "\", ";
@@ -36,15 +26,6 @@ namespace BladeSDK {
         os << "accountId: \"" << account.accountId << "\"}";
         return os;
     }
-
-
-    struct Options {
-      std::string apiKey;
-      std::string visitorId;
-      Network network;
-      std::string dAppCode;
-      std::string tvte;
-    };
 
     std::ostream& operator<<(std::ostream& os, const Options& options) {
         os << "{apiKey: \"" << options.apiKey << "\", ";
@@ -55,13 +36,6 @@ namespace BladeSDK {
         return os;
     }
 
-
-    struct AccountInfoData {
-        std::string accountId;
-        std::string evmAddress;
-        std::string publicKey;
-    };
-
     std::ostream& operator<<(std::ostream& os, const AccountInfoData& data) {
         os << "{accountId: \"" << data.accountId << "\", ";
         os << "evmAddress: \"" << data.evmAddress << "\", ";
@@ -69,44 +43,17 @@ namespace BladeSDK {
         return os;
     }
 
-
-    struct TokenBalance {
-        std::string token_id;
-        unsigned long long balance; // Use 'unsigned long long' to match C#'s ulong
-
-        TokenBalance(const std::string& tokenId, unsigned long long bal)
-            : token_id(tokenId), balance(bal) {}
-    };
-
     std::ostream& operator<<(std::ostream& os, const TokenBalance& data) {
         os << "{token_id: \"" << data.token_id << "\", ";
         os << "balance: " << data.balance << "}";
         return os;
     }
 
-
-    struct AccountBalanceData {
-        long long balance; // Use 'long long' to match C#'s long
-        std::vector<TokenBalance> tokens;
-
-        // Constructor for AccountBalanceData
-        AccountBalanceData(long long bal, const std::vector<TokenBalance>& tkns) 
-            : balance(bal), tokens(tkns) {}
-    };
-
     std::ostream& operator<<(std::ostream& os, const AccountBalanceData& data) {
         os << "{balance: " << data.balance << ", ";
         os << "tokens: " << printItems(data.tokens) << "}";
         return os;
     }
-
-
-    struct PrivateKeyData {
-      std::string privateKey;
-      std::string publicKey;
-      std::string seedPhrase;
-      std::vector<std::string> accounts;
-    };
 
     std::ostream& operator<<(std::ostream& os, const PrivateKeyData& data) {
         os << "{privateKey: \"" << data.privateKey << "\", ";
@@ -117,34 +64,15 @@ namespace BladeSDK {
         return os;
     }
 
-
-    struct BladeTxResponse {
-        std::string transactionBytes;
-        std::vector<std::byte> bytes;
-    };
-
     std::ostream& operator<<(std::ostream& os, const BladeTxResponse& data) {
         os << "{transactionBytes (base64): \"" << data.transactionBytes << "\"}";
         return os;
     }
 
-
-    struct SignMessageData {
-        std::string signedMessage;
-        std::vector<std::byte> bytes;
-    };
-
     std::ostream& operator<<(std::ostream& os, const SignMessageData& data) {
         os << "{signedMessage: \"" << data.signedMessage << "\"}";
         return os;
     }
-
-
-    struct TxReceipt {
-        std::string transactionId;
-        std::string status;
-        TransactionReceipt transactionReceipt;
-    };
 
     std::ostream& operator<<(std::ostream& os, const TxReceipt& data) {
         os << "{transactionId: \"" << data.transactionId << "\", ";
@@ -153,24 +81,11 @@ namespace BladeSDK {
         return os;
     }
 
-
-    struct Links {
-        std::string next;
-    };
-
     std::ostream& operator<<(std::ostream& os, const Links& data) {
         os << "{next: \"" << data.next << "\"}";
         return os;
     }
 
-
-    struct TransfersRaw {
-        std::string account; //"0.0.3"
-        long long amount; //6777,
-        bool is_approval; //false
-        std::string token_id;
-    };
- 
     std::ostream& operator<<(std::ostream& os, const TransfersRaw& data) {
         os << "{account: \"" << data.account << "\", ";
         os << "amount: \"" << data.amount << "\", ";
@@ -180,14 +95,6 @@ namespace BladeSDK {
         return os;
     }
 
-
-    struct TransactionHistoryNftTransfer {
-        std::string receiver_account_id;
-        std::string sender_account_id;
-        uint serial_number;
-        std::string token_id;
-    };
-
     std::ostream& operator<<(std::ostream& os, const TransactionHistoryNftTransfer& data) {
         os << "{receiver_account_id: \"" << data.receiver_account_id << "\", ";
         os << "sender_account_id: \"" << data.sender_account_id << "\", ";
@@ -196,30 +103,6 @@ namespace BladeSDK {
         
         return os;
     }
-
-
-    struct TransactionRaw {
-        // "bytes":null,
-        long long charged_tx_fee;
-        std::string consensus_timestamp;
-        // "entity_id":null,
-        std::string max_fee;
-        std::string memo_base64;
-        std::string name;
-        std::vector<TransactionHistoryNftTransfer> nft_transfers; // TODO describe valid model
-        std::string node;
-        long long nonce;
-        // "parent_consensus_timestamp":null,
-        std::string result;
-        bool scheduled;
-        // "staking_reward_transfers":[],
-        std::vector<TransfersRaw> token_transfers;
-        std::string transaction_hash;
-        std::string transaction_id;
-        std::vector<TransfersRaw> transfers;
-        std::string valid_duration_seconds;
-        std::string valid_start_timestamp;
-    };
 
     std::ostream& operator<<(std::ostream& os, const TransactionRaw& data) {
         os << "{charged_tx_fee: " << data.charged_tx_fee << ", ";
@@ -241,32 +124,12 @@ namespace BladeSDK {
         return os;
     }
 
-   
-    struct TransferData {
-        long long amount;
-        std::string account;
-        std::string token_id;
-    };
-
     std::ostream& operator<<(std::ostream& os, const TransferData& data) {
         os << "{amount: " << data.amount << ", ";
         os << "account: \"" << data.account << "\", ";
         os << "token_id: \"" << data.token_id << "\"}";
         return os;
     }
-
-
-    struct TransactionData {
-        std::string transactionId;
-        std::string type;
-        std::vector<TransferData> transfers;
-        std::vector<TransactionHistoryNftTransfer> nftTransfers;
-        std::string memo;
-        long long fee;
-        bool showDetailed;
-        // TransactionPlainData plainData;
-        std::string consensusTimestamp;
-    };
 
     std::ostream& operator<<(std::ostream& os, const TransactionData& data) {
         os << "{transactionId: \"" << data.transactionId << "\", ";
@@ -281,27 +144,25 @@ namespace BladeSDK {
         return os;
     }
 
-
-    struct TransactionsHistoryData {
-        std::vector<TransactionData> transactions;
-        std::string nextPage;
-    };
-
     std::ostream& operator<<(std::ostream& os, const TransactionsHistoryData& data) {
         os << "{transactions: " << printItems(data.transactions) << ", ";
         os << "nextPage: \"" << data.nextPage << "\"}";
         return os;
     }
 
-
-    struct TransactionsHistoryRaw {
-        std::vector<TransactionRaw> transactions;
-        Links links;
-    };
-
     std::ostream& operator<<(std::ostream& os, const TransactionsHistoryRaw& data) {
         os << "{transactions: " << printItems(data.transactions) << ", ";
         os << "links: " << data.links << "}";
         return os;
-    }    
+    }
+
+    std::ostream& operator<<(std::ostream& os, const InfoData& data) {
+        os << "{dAppCode: \"" << data.dAppCode << "\", ";
+        os << "network: \"" << enumToString(data.network) << "\", ";
+        os << "apiKey: " << data.apiKey << ", ";
+        os << "visitorId: " << data.visitorId << ", ";
+        os << "sdkEnvironment: \"" << enumToString(data.sdkEnvironment) << "\", ";
+        os << "sdkVersion: " << data.sdkVersion << "}";
+        return os;
+    }       
 }

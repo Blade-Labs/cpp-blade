@@ -8,7 +8,7 @@
 #include <boost/beast.hpp>
 #include <boost/beast/ssl.hpp>
 #include <nlohmann/json.hpp>
-#include "enum/Enums.h"
+#include "model/enums.h"
 
 using namespace Hedera;
 

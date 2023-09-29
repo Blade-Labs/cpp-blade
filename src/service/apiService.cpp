@@ -16,7 +16,6 @@ namespace BladeSDK {
         this->network = network;
         this->dAppCode = dAppCode;
         this->sdkEnvironment = sdkEnvironment;
-        this->sdkVersion = sdkVersion;
 
         if (sdkEnvironment == SdkEnvironment::CI) {
             this->apiHost = "api.bld-dev.bladewallet.io";
@@ -281,10 +280,15 @@ namespace BladeSDK {
             if (res.result_int() != 200)
             {
               std::cout << "HTTP ERROR: " << res.result_int() << std::endl;
-              std::cout << "URL: " << apiHost << path << std::endl;
+              std::cout << "URL POST: " << apiHost << path << std::endl;
+              std::cout << "Headers: (" << 
+                "X-NETWORK=" << enumToString(options.network) << ", " <<
+                "X-VISITOR-ID=" << options.visitorId << ", " <<
+                "X-DAPP-CODE=" << options.dAppCode << ", " <<
+                "X-SDK-TVTE-API=" << options.tvte << ")" << std::endl;
+              std::cout << "BODY = " << body << std::endl;
               std::cout << "HTTP message: " << res << std::endl;
-              std::cout << "BODY: " << boost::beast::buffers_to_string(res.body().data()) << std::endl;
-              throw;
+              throw std::runtime_error(std::to_string(res.result_int()) + " " + res.reason().to_string());
             }
 
             std::string response = boost::beast::buffers_to_string(res.body().data());
@@ -338,10 +342,17 @@ namespace BladeSDK {
         if (res.result_int() != 200)
         {
           std::cout << "HTTP ERROR: " << res.result_int() << std::endl;
-          std::cout << "URL: " << apiHost << path << std::endl;
+          std::cout << "URL GET: " << apiHost << path << std::endl;
+          if (options.dAppCode != "" && options.visitorId != "") {
+            std::cout << "Headers: (" << 
+                  "X-NETWORK=" << enumToString(options.network) << ", " <<
+                  "X-VISITOR-ID=" << options.visitorId << ", " <<
+                  "X-DAPP-CODE=" << options.dAppCode << ", " <<
+                  "X-SDK-TVTE-API=" << options.tvte << ")" << std::endl;
+          }
           std::cout << "HTTP message: " << res << std::endl;
           std::cout << "BODY: " << boost::beast::buffers_to_string(res.body().data()) << std::endl;
-          throw;
+          throw std::runtime_error(std::to_string(res.result_int()) + " " + res.reason().to_string());
         }
 
         json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));

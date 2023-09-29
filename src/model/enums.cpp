@@ -1,7 +1,4 @@
-#include <sstream> 
-
-#ifndef BLADE_ENUMS_H_
-#define BLADE_ENUMS_H_
+#include "../../include/model/enums.h"
 
 namespace BladeSDK {
     template <typename T>
@@ -10,11 +7,6 @@ namespace BladeSDK {
         oss << item;
         return oss.str();
     }
-
-    enum class SdkEnvironment { 
-        CI, 
-        Prod
-    };
 
     std::ostream& operator<<(std::ostream& os, SdkEnvironment environment) {
         switch (environment) {
@@ -28,12 +20,6 @@ namespace BladeSDK {
         return os;
     }
 
-    enum class Network {
-        Testnet,
-        Mainnet
-    };
-
-    // Overload operator<< for Network enum
     std::ostream& operator<<(std::ostream& os, Network network) {
         switch (network) {
             case Network::Testnet:
@@ -49,11 +35,6 @@ namespace BladeSDK {
         return os;
     }
 
-    enum class EncryptedType {
-        tvte,
-        vte
-    };
-
     std::ostream& operator<<(std::ostream& os, EncryptedType encryptedType) {
         switch (encryptedType) {
             case EncryptedType::tvte:
@@ -67,4 +48,3 @@ namespace BladeSDK {
     }
 }
 
-#endif //BLADE_ENUMS_H_

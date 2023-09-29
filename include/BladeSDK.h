@@ -13,8 +13,8 @@
 #include <iostream>
 #include <string>
 #include <nlohmann/json.hpp>
-#include "enum/Enums.h"
-#include "types.h"
+#include "model/enums.h"
+#include "model/types.h"
 #include "service/utilService.h"
 #include "service/apiService.h"
 #include "service/accountService.h"
@@ -42,6 +42,7 @@ namespace BladeSDK {
 
         public:
             Blade(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment);
+            InfoData getInfo();
             AccountData createAccountBlade();
             AccountInfoData getAccountInfo(std::string accountId);
             AccountBalanceData getBalance(std::string accountId);
@@ -55,7 +56,11 @@ namespace BladeSDK {
             TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey);
             std::string getC14url(std::string asset, std::string account, std::string amount);
             TransactionsHistoryData getTransactions(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit);
+
+            
     };
 
-    int main(int argc, char** argv);
+    std::ostream& operator<<(std::ostream& os,  Blade& blade);
+
+    // int main(int argc, char** argv);
 }

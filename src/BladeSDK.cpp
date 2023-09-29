@@ -13,6 +13,8 @@
 #include <iostream>
 #include <string>
 #include <nlohmann/json.hpp>
+#include "model/enums.cpp"
+#include "model/types.cpp"
 #include "service/apiService.cpp"
 #include "service/accountService.cpp"
 #include "service/securityService.cpp"
@@ -21,26 +23,25 @@
 
 using namespace Hedera;
 
-int main(int argc, char** argv) {
-  std::cout << "Blade-SDK example:" << std::endl;
+// int main(int argc, char** argv) {
+//   std::cout << "Blade-SDK example:" << std::endl;
 
-  std::string accountId = "0.0.346533";
-  std::string accountId2 = "0.0.346530";
-  std::string contractId = "0.0.416245";
-  std::string privateKeyHex = "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b";
-  std::string publicKeyHex = "302d300706052b8104000a032200029dc73991b0d9cdbb59b2cd0a97a0eaff6de801726cb39804ea9461df6be2dd30";
-  std::string dAppCode = "unitysdktest";
-  std::string apiKey = "Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE";
+//   std::string accountId = "0.0.346533";
+//   std::string accountId2 = "0.0.346530";
+//   std::string contractId = "0.0.416245";
+//   std::string privateKeyHex = "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b";
+//   std::string publicKeyHex = "302d300706052b8104000a032200029dc73991b0d9cdbb59b2cd0a97a0eaff6de801726cb39804ea9461df6be2dd30";
+//   std::string dAppCode = "unitysdktest";
+//   std::string apiKey = "Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE";
 
-  // TODO:
-  // - propper error handling
-  // - hethersSign
-  // - splitSignature
-  // - getParamsSignature
+//   // TODO:
+//   // - propper error handling
+//   // - put around executable files: addressbook, mainnet.pb, previewnet.pb, testnet.pb (on next release of Hedera CPP SDK)
+//   // - hethersSign, splitSignature, getParamsSignature (depend on hethers lib)
 
-  BladeSDK::Blade blade(apiKey, BladeSDK::Network::Testnet, dAppCode, BladeSDK::SdkEnvironment::CI);
+//   BladeSDK::Blade blade(apiKey, BladeSDK::Network::Testnet, dAppCode, BladeSDK::SdkEnvironment::CI);
   
-  std::cout << "createAccountBlade: " << blade.createAccountBlade() << std::endl;
+//   std::cout << "createAccountBlade: " << blade.createAccountBlade() << std::endl;
   
   // std::cout << "getAccountInfo: " << blade.getAccountInfo(accountId) << std::endl;
 
@@ -107,8 +108,8 @@ int main(int argc, char** argv) {
   // BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTODELETE", "", 2);
   // std::cout << "getTransactions (CRYPTODELETE)[" << history.transactions.size() << "]: " << history << std::endl;
   
-
-}
+// 
+// }
 
 namespace BladeSDK {
   Blade::Blade(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment)
@@ -118,9 +119,20 @@ namespace BladeSDK {
     this->apiKey = apiKey;
     this->dAppCode = dAppCode;
     this->sdkEnvironment = sdkEnvironment;
-
     FingerprintService fingerprintService = FingerprintService();
-    apiService.init(this->sdkVersion, fingerprintService.getVisitorId());
+    this->visitorId = fingerprintService.getVisitorId();
+    apiService.init(this->sdkVersion, this->visitorId);
+  }
+
+  InfoData Blade::getInfo() {
+    return {
+      .apiKey = this->apiKey,
+      .dAppCode = this->dAppCode,
+      .network = this->network,
+      .visitorId = this->visitorId,
+      .sdkEnvironment = this->sdkEnvironment,
+      .sdkVersion = this->sdkVersion,
+    };
   }
 
   AccountData Blade::createAccountBlade() {
@@ -433,6 +445,13 @@ namespace BladeSDK {
     } else {
       return Client::forTestnet();
     }
+  }
+
+  std::ostream& operator<<(std::ostream& os, Blade& blade) {
+    InfoData info = blade.getInfo();
+    os << info;
+    
+    return os;
   }
 }
 

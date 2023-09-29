@@ -6,6 +6,7 @@
 #include <vector>
 #include <random>
 #include <ctime>
+#include <stdexcept>
 #include "TransactionReceipt.h"
 #include <boost/beast/core/detail/base64.hpp>
 

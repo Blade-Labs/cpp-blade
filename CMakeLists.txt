@@ -34,8 +34,8 @@ find_package(Boost REQUIRED)
 
 
 
-add_executable(${PROJECT_NAME} src/BladeSDK.cpp)
-# add_library(${PROJECT_NAME} STATIC)
+# add_executable(${PROJECT_NAME} src/BladeSDK.cpp)
+add_library(${PROJECT_NAME} STATIC)
 
 include_directories(${Boost_INCLUDE_DIRS}/boost)
 include_directories(${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/include)
