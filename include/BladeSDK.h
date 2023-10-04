@@ -33,7 +33,7 @@ namespace BladeSDK {
             Network network;
             std::string dAppCode;
             std::string visitorId;
-            std::string sdkVersion = "Unity@0.6.4";
+            std::string sdkVersion = "Cpp@0.6.4";
             SdkEnvironment sdkEnvironment;
             
             Client getClient();
