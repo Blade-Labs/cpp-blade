@@ -9,8 +9,8 @@ set(Protobuf_USE_STATIC_LIBS ON)
 include(FetchContent)
 FetchContent_Declare(
         hedera-sdk-cpp
-	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.16.0/hedera-sdk-cpp-v0.16.0-90da24ac.tar.gz
-        URL_HASH SHA256=1a01d4b01a15ce0168d6a8b294534723d70738ac3b350ba90698dbc2ae633303
+	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.19.0/hedera-sdk-cpp-v0.19.0-42780aa9.tar.gz
+        URL_HASH SHA256=6e86d2e8dc36e6e1121cf5143daefb0caa8f8a472525f7dfaab557db68778536
 )
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(hedera-sdk-cpp)
@@ -29,6 +29,7 @@ find_package(upb CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(Boost REQUIRED)
+find_package(CURL REQUIRED)
 
 
 
@@ -91,6 +92,10 @@ endif ()
 if (NOT WIN32)
 #    target_link_libraries(${PROJECT_NAME} PRIVATE sys::resolv)
 endif ()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        OpenSSL::SSL
+        OpenSSL::Crypto)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         gRPC::address_sorting
@@ -180,6 +185,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         absl::throw_delegate
         absl::time
         absl::time_zone)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         upb::upb

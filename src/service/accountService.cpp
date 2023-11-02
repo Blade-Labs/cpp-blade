@@ -6,7 +6,7 @@ namespace BladeSDK {
 namespace AccountService {
 	int executeUpdateAccountTransactions(
         Client* client, 
-        std::unique_ptr<PrivateKey> &privateKey,
+        std::shared_ptr<PrivateKey> &privateKey,
         std::string updateAccountTransactionBytes,
         std::string transactionBytes
   ) {
@@ -34,7 +34,7 @@ namespace AccountService {
                 TokenAssociateTransaction tokenAssociateTransaction = *tx.getTransaction<TokenAssociateTransaction>();
                 TransactionResponse txResp = tokenAssociateTransaction
                     .freezeWith(client)
-                    .sign(privateKey.get())
+                    .sign(privateKey)
                     .execute(*client)
                 ;
                 break;

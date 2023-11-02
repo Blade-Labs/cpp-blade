@@ -15,7 +15,7 @@ namespace BladeSDK {
 namespace AccountService {
 	int executeUpdateAccountTransactions(
         Hedera::Client* client, 
-        std::unique_ptr < Hedera::ECDSAsecp256k1PrivateKey> &privateKey,
+        std::shared_ptr<PrivateKey> &privateKey,
         std::string updateAccountTransactionBytes,
         std::string transactionBytes
     );

@@ -38,7 +38,7 @@ namespace BladeSDK {
             
             Client getClient();
             MnemonicBIP39 getMnemonic();
-            std::unique_ptr<PrivateKey> getPrivateKey(MnemonicBIP39);
+            std::shared_ptr<PrivateKey> getPrivateKey(MnemonicBIP39);
 
         public:
             Blade(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment);

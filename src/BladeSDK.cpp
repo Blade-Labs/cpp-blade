@@ -23,93 +23,6 @@
 
 using namespace Hedera;
 
-// int main(int argc, char** argv) {
-//   std::cout << "Blade-SDK example:" << std::endl;
-
-//   std::string accountId = "0.0.346533";
-//   std::string accountId2 = "0.0.346530";
-//   std::string contractId = "0.0.416245";
-//   std::string privateKeyHex = "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b";
-//   std::string publicKeyHex = "302d300706052b8104000a032200029dc73991b0d9cdbb59b2cd0a97a0eaff6de801726cb39804ea9461df6be2dd30";
-//   std::string dAppCode = "unitysdktest";
-//   std::string apiKey = "Rww3x27z3Q9rrIvRQ6qGgIRppxz5e5HHPWdARyxnMXpe77WD5MW39REBXXvRZsZE";
-
-//   // TODO:
-//   // - propper error handling
-//   // - put around executable files: addressbook, mainnet.pb, previewnet.pb, testnet.pb (on next release of Hedera CPP SDK)
-//   // - hethersSign, splitSignature, getParamsSignature (depend on hethers lib)
-
-//   BladeSDK::Blade blade(apiKey, BladeSDK::Network::Testnet, dAppCode, BladeSDK::SdkEnvironment::CI);
-  
-//   std::cout << "createAccountBlade: " << blade.createAccountBlade() << std::endl;
-  
-  // std::cout << "getAccountInfo: " << blade.getAccountInfo(accountId) << std::endl;
-
-  // std::cout << "getBalance: " << blade.getBalance(accountId) << std::endl;
-
-  // std::cout << "importAccount: " << blade.importAccount("best soccer little verify love ladder else kick depth mesh silly desert", true) << std::endl; // ECDSA, 0.0.2018696
-
-  // std::cout << "transferHbars: " << blade.transferHbars(accountId, privateKeyHex, accountId2, "15", "cpp-sdk-test") << std::endl;
-
-  // std::cout << "transferTokens (paid): " <<  blade.transferTokens("0.0.433870", accountId, privateKeyHex, accountId2, "1", "cpp-sdk-paid-token-transfer", false) << std::endl;
-
-  // std::cout << "transferTokens (blade pay): " <<  blade.transferTokens("0.0.433870", accountId, privateKeyHex, accountId2, "1", "cpp-sdk-blade-pay-token-transfer", true) << std::endl;
-  
-  // // sign + verify
-  // std::string message = "hello";
-  // std::string messageBase64 = BladeSDK::UtilService::stringToBase64(message);
-  // std::string messageHex = BladeSDK::UtilService::vectorToHex(BladeSDK::UtilService::stringToVector(message));
-
-  // BladeSDK::SignMessageData signature = blade.sign(message, privateKeyHex, "string");
-  // std::cout << "Sign str (" << message << "): " << signature << std::endl;
-  // std::cout << "Valid?: " << blade.signVerify(message, signature.signedMessage, publicKeyHex, "string") << std::endl;  
-
-  // signature = blade.sign(messageBase64, privateKeyHex, "base64");
-  // std::cout << "Sign base64 (" << messageBase64 << "): " << signature << std::endl;
-  // std::cout << "Valid?: " << blade.signVerify(messageBase64, signature.signedMessage, publicKeyHex, "base64") << std::endl;
-
-  // signature = blade.sign(messageHex, privateKeyHex, "hex");
-  // std::cout << "Sign hex (" << messageHex << "): " << signature << std::endl;
-  // std::cout << "Valid?: " << blade.signVerify(messageHex, signature.signedMessage, publicKeyHex, "hex") << std::endl;
-
-
-  // contract call [paid]
-  // ContractFunctionParameters params = ContractFunctionParameters().addString("cpp-sdk-test [self pay]");
-  // std::cout << "Contract call: " << blade.contractCallFunction(contractId, "set_message", params, accountId, privateKeyHex, 150000, false) << std::endl;
-
-  // contract call [Blade pay]
-  // ContractFunctionParameters params = ContractFunctionParameters().addString("cpp-sdk-test [Blade pay]");
-  // std::cout << "Contract call: " << blade.contractCallFunction(contractId, "set_message", params, accountId, privateKeyHex, 150000, true) << std::endl;
-
-
-  // WIP
-  // contract call query (self pay)
-  // ContractFunctionParameters params = ContractFunctionParameters();
-  // std::cout << "Contract call query: " << blade.contractCallQueryFunction(contractId, "get_message", params, accountId, privateKeyHex, 1500000, {"string", "int32"}) << std::endl;
-
-
-  // delete account
-  // BladeSDK::AccountData accountOperator = BladeSDK::AccountData {.accountId = accountId, .privateKey = privateKeyHex};
-  // BladeSDK::AccountData accountToDelete = BladeSDK::AccountData {.accountId = "0.0.2577306", .privateKey = "3030020100300706052B8104000A04220420AF9B9915BE6A3B4BED77C127679939B5339A20B042196F870DB4191C4C472AF4"};
-  // std::cout << "deleteAccount: " << blade.deleteAccount(accountToDelete.accountId, accountToDelete.privateKey, accountOperator.accountId, accountOperator.accountId, accountOperator.privateKey) << std::endl;
-  
-  
-  // get C14 url
-  // std::cout << "c14 url: " << blade.getC14url("karate", "0.0.123456", "1234") << std::endl;
-
-
-  //get transaction history
-  // BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTOTRANSFER", "/api/v1/transactions?account.id=0.0.346533&limit=25&timestamp=lt:1695395474.219548003", 5);
-  // std::cout << "getTransactions (CRYPTOTRANSFER)[" << history.transactions.size() << "]: " << history << std::endl;
-
-  // BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTOCREATEACCOUNT", "", 5);
-  // std::cout << "getTransactions (CRYPTOCREATEACCOUNT)[" << history.transactions.size() << "]: " << history << std::endl;
-
-  // BladeSDK::TransactionsHistoryData history = blade.getTransactions(accountId, "CRYPTODELETE", "", 2);
-  // std::cout << "getTransactions (CRYPTODELETE)[" << history.transactions.size() << "]: " << history << std::endl;
-  
-// 
-// }
 
 namespace BladeSDK {
   Blade::Blade(const std::string& apiKey, const Network& network, const std::string& dAppCode, const SdkEnvironment& sdkEnvironment)
@@ -137,7 +50,7 @@ namespace BladeSDK {
 
   AccountData Blade::createAccountBlade() {
     MnemonicBIP39 seedPhrase = getMnemonic();
-    std::unique_ptr<PrivateKey> privateKey = getPrivateKey(seedPhrase);
+    std::shared_ptr<PrivateKey> privateKey = getPrivateKey(seedPhrase);
     std::shared_ptr<PublicKey> publicKey = privateKey->getPublicKey();
 
     json account = apiService.createAccount(publicKey);
@@ -175,7 +88,7 @@ namespace BladeSDK {
   
   PrivateKeyData Blade::importAccount(std::string seedPhrase, bool lookupAccounts) {
     MnemonicBIP39 mnemonic = MnemonicBIP39::initializeBIP39Mnemonic(seedPhrase);
-    std::unique_ptr<PrivateKey> privateKey = getPrivateKey(mnemonic);
+    std::shared_ptr<PrivateKey> privateKey = getPrivateKey(mnemonic);
     std::vector<std::string> accountIds = apiService.getAccountsFromPublicKey(privateKey->getPublicKey()->toStringRaw());
 
     return {
@@ -188,7 +101,7 @@ namespace BladeSDK {
 
   TxReceipt Blade::transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo) {
       Client client = this->getClient();
-      client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey).get());
+      client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey));
       const Hbar amountHbar(std::stoull(amount), HbarUnit::HBAR());
 
       TransactionResponse txResponse = TransferTransaction()
@@ -203,10 +116,10 @@ namespace BladeSDK {
   }
 
   TxReceipt Blade::transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer) {
-    std::unique_ptr<PrivateKey> privateKey = ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey);
+    const std::shared_ptr<PrivateKey> privateKey = ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey);
 
     Client client = this->getClient();
-    client.setOperator(AccountId::fromString(accountId), privateKey.get());
+    client.setOperator(AccountId::fromString(accountId), privateKey);
     json tokenMeta = apiService.GET("/api/v1/tokens/" + tokenId);
     std::string decimals = tokenMeta.value("decimals", "0");
     long long correctedAmount = std::stoull(amount) * std::pow(10, std::stoi(decimals));
@@ -219,7 +132,7 @@ namespace BladeSDK {
         TransferTransaction transferTransaction = *tx.getTransaction<TransferTransaction>();
         TransactionResponse txResp = transferTransaction
           .freezeWith(&client)
-          .sign(privateKey.get())
+          .sign(privateKey)
           .execute(client)
         ;
         TransactionReceipt receipt = txResp.getReceipt(client);
@@ -281,9 +194,9 @@ namespace BladeSDK {
   }
 
   TxReceipt Blade::contractCallFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee) {
-    std::unique_ptr<PrivateKey> privateKey = ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey);
+    const std::shared_ptr<PrivateKey> privateKey = ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey);
     Client client = this->getClient();
-    client.setOperator(AccountId::fromString(accountId), privateKey.get());
+    client.setOperator(AccountId::fromString(accountId), privateKey);
     
     if (bladePayFee) {
       BladeTxResponse bladeTxResponse = apiService.signContractCallTx(parameters.toBytes(functionName), contractId, functionName, gas, false);
@@ -293,7 +206,7 @@ namespace BladeSDK {
         ContractExecuteTransaction transaction = *tx.getTransaction<ContractExecuteTransaction>();
 
         TransactionResponse txResp = transaction
-          .sign(privateKey.get())
+          .sign(privateKey)
           .execute(client);
 
         std::cout << "executed." << std::endl;
@@ -333,7 +246,7 @@ namespace BladeSDK {
     Hbar payment = Hbar(9999999999999, HbarUnit::HBAR());
 
     Client client = this->getClient();
-    client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(privateKeyHex).get());
+    client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(privateKeyHex));
 
     ContractFunctionResult result = ContractCallQuery()
       .setContractId(ContractId(0, 0, 416245))
@@ -350,16 +263,16 @@ namespace BladeSDK {
   }
 
   TxReceipt Blade::deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey) {
-    std::unique_ptr<PrivateKey> deleteAccountKey = ECDSAsecp256k1PrivateKey::fromString(deletePrivateKey);
-    std::unique_ptr<PrivateKey> operatorAccountKey = ECDSAsecp256k1PrivateKey::fromString(operatorPrivateKey);
+    const std::shared_ptr<PrivateKey> deleteAccountKey = ECDSAsecp256k1PrivateKey::fromString(deletePrivateKey);
+    const std::shared_ptr<PrivateKey> operatorAccountKey = ECDSAsecp256k1PrivateKey::fromString(operatorPrivateKey);
     Client client = this->getClient();
-    client.setOperator(AccountId::fromString(operatorAccountId), operatorAccountKey.get());
+    client.setOperator(AccountId::fromString(operatorAccountId), operatorAccountKey);
 
     TransactionResponse txResp = AccountDeleteTransaction()
       .setDeleteAccountId(AccountId::fromString(deleteAccountId))
       .setTransferAccountId(AccountId::fromString(transferAccountId))
       .freezeWith(&client)
-      .sign(deleteAccountKey.get())
+      .sign(deleteAccountKey)
       .execute(client);
 
     std::cout << "executed." << std::endl;
@@ -434,7 +347,7 @@ namespace BladeSDK {
     return seedPhrase;
   }
 
-  std::unique_ptr<PrivateKey> Blade::getPrivateKey(MnemonicBIP39 mnemonic) {
+  std::shared_ptr<PrivateKey> Blade::getPrivateKey(MnemonicBIP39 mnemonic) {
     // return mnemonic.toStandardECDSAsecp256k1PrivateKey();
     return ECDSAsecp256k1PrivateKey::fromSeed(mnemonic.toSeed())->derive(44)->derive(3030)->derive(0)->derive(0);
   }
