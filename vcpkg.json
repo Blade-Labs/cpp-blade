@@ -8,7 +8,6 @@
     "grpc",
     "upb",
     "nlohmann-json",
-    "boost-beast",
-    "curl"
+    "boost-beast"
   ]
 }
