@@ -9,8 +9,8 @@ set(Protobuf_USE_STATIC_LIBS ON)
 include(FetchContent)
 FetchContent_Declare(
         hedera-sdk-cpp
-	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.19.0/hedera-sdk-cpp-v0.19.0-42780aa9.tar.gz
-        URL_HASH SHA256=6e86d2e8dc36e6e1121cf5143daefb0caa8f8a472525f7dfaab557db68778536
+    URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.18.0/hedera-sdk-cpp-v0.18.0-512a2f27.tar.gz
+        URL_HASH SHA256=a8ca79dbe9e7721f4852de22a40c268e4c267a971cb4f194faeac498c0dcec76
 )
 set(FETCHCONTENT_QUIET OFF)
 FetchContent_MakeAvailable(hedera-sdk-cpp)
