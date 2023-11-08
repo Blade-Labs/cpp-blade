@@ -9,6 +9,7 @@
 #include "TransactionReceipt.h"
 #include "TransactionResponse.h"
 #include "ContractCallQuery.h"
+#include "ContractFunctionResult.h"
 
 #include <iostream>
 #include <string>
@@ -52,7 +53,7 @@ namespace BladeSDK {
             SignMessageData sign(std::string message, std::string signerKey, std::string encoding);
             bool signVerify(std::string message, std::string signatureHex, std::string key, std::string encoding);
             TxReceipt contractCallFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee);
-            bool contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, std::vector<std::string> returnTypes);
+            ContractFunctionResult contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, double maxQueryPayment, std::vector<std::string> returnTypes);
             TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey);
             std::string getC14url(std::string asset, std::string account, std::string amount);
             TransactionsHistoryData getTransactions(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit);
