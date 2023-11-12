@@ -179,14 +179,14 @@ namespace UtilService {
                 }
 
                 TransactionData transaction = TransactionData {
-                    .consensusTimestamp = record["consensus_timestamp"].get<std::string>(),
-                    .fee = record["charged_tx_fee"].get<long long>(),
-                    .memo = base64ToString(record["memo_base64"].get<std::string>()),
-                    .nftTransfers  = nftTransfers,
-                    .transfers = transfers,
-                    .showDetailed = false,
                     .transactionId = record["transaction_id"].get<std::string>(),
                     .type = record["name"].get<std::string>(),
+                    .transfers = transfers,
+                    .nftTransfers  = nftTransfers,
+                    .memo = base64ToString(record["memo_base64"].get<std::string>()),
+                    .fee = record["charged_tx_fee"].get<long long>(),
+                    .showDetailed = false,
+                    .consensusTimestamp = record["consensus_timestamp"].get<std::string>()
                 };
                 result.push_back(transaction);
                 
