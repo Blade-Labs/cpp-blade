@@ -77,8 +77,8 @@ namespace BladeSDK {
 
     return {
       .accountId = result.value("account", ""),
-      .publicKey = result["key"].value("key", ""),
       .evmAddress = result.value("evm_address", ""),
+      .publicKey = result["key"].value("key", ""),
     };
   }
 
