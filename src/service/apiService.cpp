@@ -279,21 +279,27 @@ namespace BladeSDK {
 
             if (res.result_int() != 200)
             {
-              std::cout << "HTTP ERROR: " << res.result_int() << std::endl;
-              std::cout << "URL POST: " << apiHost << path << std::endl;
-              std::cout << "Headers: (" << 
+              std::ostringstream err;        
+              err << "HTTP ERROR: " << res.result_int() << std::endl;
+              err << "URL POST: " << apiHost << path << std::endl;
+              err << "Headers: (" << 
                 "X-NETWORK=" << enumToString(options.network) << ", " <<
                 "X-VISITOR-ID=" << options.visitorId << ", " <<
                 "X-DAPP-CODE=" << options.dAppCode << ", " <<
                 "X-SDK-TVTE-API=" << options.tvte << ")" << std::endl;
-              std::cout << "BODY = " << body << std::endl;
-              std::cout << "HTTP message: " << res << std::endl;
-              throw std::runtime_error(std::to_string(res.result_int()) + " " + res.reason().to_string());
+              err << "BODY = " << body << std::endl;
+              err << "HTTP message: " << res << std::endl;
+
+              std::cout << err.str() << std::endl;
+              throw std::runtime_error(err.str());
             }
 
             std::string response = boost::beast::buffers_to_string(res.body().data());
             json result = response != "" ? nlohmann::json::parse(response) : nlohmann::json::object();
             return result;
+        } catch (const std::runtime_error& e) {
+            std::cerr << "Unknown exception" << std::endl;
+            throw e;
         } catch (const std::exception& e) {
             std::cerr << "Error: " << e.what() << std::endl;
             throw e;
@@ -302,60 +308,70 @@ namespace BladeSDK {
 
 
     json ApiService::makeRequestGet(std::string apiHost, std::string path, struct Options options) {
-        net::io_context ioc;
-        ssl::context ctx(ssl::context::sslv23_client);
-        ctx.set_default_verify_paths();
+        try {
+            net::io_context ioc;
+            ssl::context ctx(ssl::context::sslv23_client);
+            ctx.set_default_verify_paths();
 
-        // Create the SSL stream and connect to the server
-        ssl::stream<tcp::socket> stream(ioc, ctx);
-        tcp::resolver resolver(ioc);
+            // Create the SSL stream and connect to the server
+            ssl::stream<tcp::socket> stream(ioc, ctx);
+            tcp::resolver resolver(ioc);
 
-        if (!SSL_set_tlsext_host_name(stream.native_handle(), apiHost.c_str())) {
-            boost::system::error_code ec{static_cast<int>(::ERR_get_error()), net::error::get_ssl_category()};
-            throw boost::system::system_error{ec};
+            if (!SSL_set_tlsext_host_name(stream.native_handle(), apiHost.c_str())) {
+                boost::system::error_code ec{static_cast<int>(::ERR_get_error()), net::error::get_ssl_category()};
+                throw boost::system::system_error{ec};
+            }
+
+            auto results = resolver.resolve(apiHost, "https");
+            net::connect(stream.next_layer(), results.begin(), results.end());
+
+            stream.handshake(ssl::stream_base::client);
+
+            // Make the HTTP request
+            http::request<http::string_body> req{ http::verb::get, path, 11 };
+            req.set(http::field::host, apiHost);
+            req.set(http::field::user_agent, "CPP-Blade");
+            req.set(http::field::content_type, "application/json");
+            if (options.dAppCode != "" && options.visitorId != "") {
+              req.set("X-NETWORK", enumToString(options.network));
+              req.set("X-VISITOR-ID", options.visitorId);
+              req.set("X-DAPP-CODE", options.dAppCode);
+              req.set("X-SDK-TVTE-API", options.tvte);
+            }
+            req.prepare_payload();
+            http::write(stream, req);
+
+            // Receive the HTTP response
+            boost::beast::flat_buffer buffer;
+            http::response<http::dynamic_body> res;
+            http::read(stream, buffer, res);
+
+            if (res.result_int() != 200)
+            {
+              std::ostringstream err;
+              err << "HTTP ERROR: " << res.result_int() << std::endl;
+              err << "URL GET: " << apiHost << path << std::endl;
+              if (options.dAppCode != "" && options.visitorId != "") {
+                err << "Headers: (" << 
+                      "X-NETWORK=" << enumToString(options.network) << ", " <<
+                      "X-VISITOR-ID=" << options.visitorId << ", " <<
+                      "X-DAPP-CODE=" << options.dAppCode << ", " <<
+                      "X-SDK-TVTE-API=" << options.tvte << ")" << std::endl;
+              }
+              err << "HTTP message: " << res << std::endl;
+              err << "BODY: " << boost::beast::buffers_to_string(res.body().data()) << std::endl;
+              std::cout << err.str() << std::endl;
+              throw std::runtime_error(err.str());
+            }
+
+            json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
+            return result;
+        } catch (const std::runtime_error& e) {
+            std::cerr << "Unknown exception" << std::endl;
+            throw e;
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+            throw e;
         }
-
-        auto results = resolver.resolve(apiHost, "https");
-        net::connect(stream.next_layer(), results.begin(), results.end());
-
-        stream.handshake(ssl::stream_base::client);
-
-        // Make the HTTP request
-        http::request<http::string_body> req{ http::verb::get, path, 11 };
-        req.set(http::field::host, apiHost);
-        req.set(http::field::user_agent, "CPP-Blade");
-        req.set(http::field::content_type, "application/json");
-        if (options.dAppCode != "" && options.visitorId != "") {
-          req.set("X-NETWORK", enumToString(options.network));
-          req.set("X-VISITOR-ID", options.visitorId);
-          req.set("X-DAPP-CODE", options.dAppCode);
-          req.set("X-SDK-TVTE-API", options.tvte);
-        }
-        req.prepare_payload();
-        http::write(stream, req);
-
-        // Receive the HTTP response
-        boost::beast::flat_buffer buffer;
-        http::response<http::dynamic_body> res;
-        http::read(stream, buffer, res);
-
-        if (res.result_int() != 200)
-        {
-          std::cout << "HTTP ERROR: " << res.result_int() << std::endl;
-          std::cout << "URL GET: " << apiHost << path << std::endl;
-          if (options.dAppCode != "" && options.visitorId != "") {
-            std::cout << "Headers: (" << 
-                  "X-NETWORK=" << enumToString(options.network) << ", " <<
-                  "X-VISITOR-ID=" << options.visitorId << ", " <<
-                  "X-DAPP-CODE=" << options.dAppCode << ", " <<
-                  "X-SDK-TVTE-API=" << options.tvte << ")" << std::endl;
-          }
-          std::cout << "HTTP message: " << res << std::endl;
-          std::cout << "BODY: " << boost::beast::buffers_to_string(res.body().data()) << std::endl;
-          throw std::runtime_error(std::to_string(res.result_int()) + " " + res.reason().to_string());
-        }
-
-        json result = nlohmann::json::parse(boost::beast::buffers_to_string(res.body().data()));
-        return result;
     }
 }
