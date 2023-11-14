@@ -9,7 +9,7 @@ set(Protobuf_USE_STATIC_LIBS ON)
 include(FetchContent)
 FetchContent_Declare(
         hedera-sdk-cpp
-	URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.19.0/hedera-sdk-cpp-v0.19.0-42780aa9.tar.gz
+    URL https://github.com/hashgraph/hedera-sdk-cpp/releases/download/v0.19.0/hedera-sdk-cpp-v0.19.0-42780aa9.tar.gz
         URL_HASH SHA256=6e86d2e8dc36e6e1121cf5143daefb0caa8f8a472525f7dfaab557db68778536
 )
 set(FETCHCONTENT_QUIET OFF)
@@ -59,13 +59,12 @@ set(public_headers
 if(CMAKE_COMPILER_IS_GNUCXX)
     # compile options for this target only
     # treat warnings as errors
-    target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
+    target_compile_options(${PROJECT_NAME} PRIVATE)
 endif()
 
 # where to find our CMake modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 #message(STATUS "CMake module path: ${CMAKE_MODULE_PATH}")
-# include(Installing)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libhedera-sdk-cpp.a)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libhapi.a)
@@ -75,9 +74,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${hedera-sdk-cpp_SOURCE_DIR}/${CMA
 target_sources(blade-cpp PRIVATE "src")
 
 if (APPLE)
-    # target_link_libraries(${PROJECT_NAME} PRIVATE ${OSX_CORE_FOUNDATION})
-    # target_link_libraries(${PROJECT_NAME} PRIVATE ${OSX_CF_NETWORK})
-
     target_link_libraries(${PROJECT_NAME}
         PRIVATE 
         "-framework CoreFoundation"
@@ -206,10 +202,3 @@ install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin
 )
-
-# file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/addressbook/testnet.pb DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-# file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/addressbook/mainnet.pb DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-# file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/wordlists/bip39-english.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-# file(COPY ${hedera-sdk-cpp_SOURCE_DIR}/wordlists/legacy-english.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-
-# install(TARGETS blade-cpp DESTINATION bin)

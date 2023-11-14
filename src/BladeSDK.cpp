@@ -77,8 +77,8 @@ namespace BladeSDK {
 
     return {
       .accountId = result.value("account", ""),
-      .publicKey = result["key"].value("key", ""),
       .evmAddress = result.value("evm_address", ""),
+      .publicKey = result["key"].value("key", ""),
     };
   }
 
@@ -233,33 +233,21 @@ namespace BladeSDK {
     }
   }
 
-  // WIP
-  bool Blade::contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId_, std::string accountPrivateKey, long long gas_, std::vector<std::string> returnTypes) {
-
-    // auto id = UtilService::splitIdToIntTuple(contractId);
-    // ContractId contract = ContractId(std::get<0>(id), std::get<1>(id), std::get<2>(id));
+  ContractFunctionResult Blade::contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, double maxQueryPayment, std::vector<std::string> returnTypes) {
+    auto id = UtilService::splitIdToIntTuple(contractId);
+    ContractId contract = ContractId(std::get<0>(id), std::get<1>(id), std::get<2>(id));
     
-      
-    std::string accountId = "0.0.346533";
-    std::string privateKeyHex = "3030020100300706052b8104000a04220420ebccecef769bb5597d0009123a0fd96d2cdbe041c2a2da937aaf8bdc8731799b";
-    long long gas = 15000000;
-    Hbar payment = Hbar(9999999999999, HbarUnit::HBAR());
-
     Client client = this->getClient();
-    client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(privateKeyHex));
+    client.setOperator(AccountId::fromString(accountId), ECDSAsecp256k1PrivateKey::fromString(accountPrivateKey));
 
     ContractFunctionResult result = ContractCallQuery()
-      .setContractId(ContractId(0, 0, 416245))
+      .setContractId(contract)
       .setGas(gas)
-      .setQueryPayment(payment)
-    
-      .setMaxQueryPayment(payment)
+      .setMaxQueryPayment(Hbar(maxQueryPayment, HbarUnit::HBAR()))
       .setFunction(functionName, parameters)
       .execute(client);
 
-    std::cout << "result.getString(0): " << result.getString(0) << std::endl;
-    
-    return false;
+    return result;
   }
 
   TxReceipt Blade::deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey) {
