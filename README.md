@@ -1,6 +1,9 @@
 # Introduction
 
-## Welcome to CPP Blade SDK for Unreal Gaming Engine
+## Welcome to CPP Blade SDK
+
+As Blade-cpp SDK using https://github.com/hashgraph/hedera-sdk-cpp, which still in development there are limited functionality now. 
+Please use ECDSA keys only.
 
 ### Requirements
 
@@ -15,6 +18,8 @@
 ### Example app 
 
 Also there is example app using this SDK, please check: https://github.com/Blade-Labs/cpp-blade-demoapp
+
+[<img src="./docs/demo.gif" width="70%">](https://www.youtube.com/watch?v=RIiEelrwWCA "Demo video")
 
 ### Install
 
@@ -46,8 +51,10 @@ install(FILES
 
 3. Run commands
 
-```
+```bash
 cmake --preset macos-arm64-release
 cmake --build --preset macos-arm64-release
 cd package/bin && ./demo-application
 ```
+
+The above steps are the basic ones required to set up Blade-cpp SDK. However, there are other configuration options that you may want to explore depending on your use case. You can find more information in the documentation or in [demoapp](https://github.com/Blade-Labs/cpp-blade-demoapp/)
