@@ -90,7 +90,6 @@ namespace BladeSDK {
 
     json ApiService::GET(std::string route) {
       std::string apiHost = getMirrorNodeHost(network);
-      // std::cout << apiHost << route << std::endl;
       return makeRequestGet(getMirrorNodeHost(network), route, {});
     }
 
@@ -123,7 +122,7 @@ namespace BladeSDK {
               }
             }
         } else {
-            std::cout << "\"transactions\" not found or not an array." << std::endl;
+            throw std::runtime_error("\"transactions\" not found or not an array.");
         }
 
         std::sort(transactions.begin(), transactions.end(),
@@ -214,7 +213,7 @@ namespace BladeSDK {
               result.push_back(token);
             }
         } else {
-            std::cout << "\"tokens\" not found or not an array." << std::endl;
+            throw std::runtime_error("\"tokens\" not found or not an array.");
         }
 
         if (!response["links"]["next"].is_null()) {
@@ -290,7 +289,7 @@ namespace BladeSDK {
               err << "BODY = " << body << std::endl;
               err << "HTTP message: " << res << std::endl;
 
-              std::cout << err.str() << std::endl;
+              // std::cout << err.str() << std::endl;
               throw std::runtime_error(err.str());
             }
 
@@ -360,7 +359,7 @@ namespace BladeSDK {
               }
               err << "HTTP message: " << res << std::endl;
               err << "BODY: " << boost::beast::buffers_to_string(res.body().data()) << std::endl;
-              std::cout << err.str() << std::endl;
+              // std::cout << err.str() << std::endl;
               throw std::runtime_error(err.str());
             }
 

@@ -48,7 +48,7 @@ namespace BladeSDK {
     };
   }
 
-  AccountData Blade::createAccountBlade() {
+  AccountData Blade::createAccount() {
     MnemonicBIP39 seedPhrase = getMnemonic();
     std::shared_ptr<PrivateKey> privateKey = getPrivateKey(seedPhrase);
     std::shared_ptr<PublicKey> publicKey = privateKey->getPublicKey();
@@ -126,7 +126,6 @@ namespace BladeSDK {
 
     if (freeTransfer) {
       BladeTxResponse response = apiService.freeTokenTransfer(accountId, receiverId, correctedAmount, memo);
-      std::cout << "response.transactionBytes: " << response.transactionBytes << std::endl;
       const WrappedTransaction tx = Transaction<TransferTransaction>::fromBytes(response.bytes);
       if (tx.getTransactionType() == TransactionType::TRANSFER_TRANSACTION) {
         TransferTransaction transferTransaction = *tx.getTransaction<TransferTransaction>();
@@ -136,8 +135,6 @@ namespace BladeSDK {
           .execute(client)
         ;
         TransactionReceipt receipt = txResp.getReceipt(client);
-
-        // std::cout << "AccountId: " << txReceipt.mAccountId.value().toString() << std::endl;
 
         return UtilService::formatReceipt(receipt);
       }
@@ -209,8 +206,6 @@ namespace BladeSDK {
           .sign(privateKey)
           .execute(client);
 
-        std::cout << "executed." << std::endl;
-
         TransactionReceipt receipt = txResp.getReceipt(client);
 
         return UtilService::formatReceipt(receipt);
@@ -225,8 +220,6 @@ namespace BladeSDK {
         .setFunction(functionName, parameters)
         .execute(client);
         
-      std::cout << "executed." << std::endl;
-
       TransactionReceipt receipt = txResp.getReceipt(client);
 
       return UtilService::formatReceipt(receipt);
@@ -262,8 +255,6 @@ namespace BladeSDK {
       .freezeWith(&client)
       .sign(deleteAccountKey)
       .execute(client);
-
-    std::cout << "executed." << std::endl;
 
     TransactionReceipt receipt = txResp.getReceipt(client);
 

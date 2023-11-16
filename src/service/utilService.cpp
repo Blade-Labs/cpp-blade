@@ -192,7 +192,7 @@ namespace UtilService {
                 
             }
         } else {
-            std::cout << "\"transactions\" not found or not an array." << std::endl;
+            throw std::runtime_error("\"transactions\" not found or not an array.");
         }
         return result;
     }

@@ -4,7 +4,7 @@ Before call any method of Blade object you need to call initialize. It creates i
 
 Example:
 
-```
+```cpp
 #include <iostream>
 #include <BladeSDK.h>
 

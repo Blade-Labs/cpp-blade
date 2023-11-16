@@ -10,18 +10,23 @@ namespace AccountService {
         std::string updateAccountTransactionBytes,
         std::string transactionBytes
   ) {
-    if (updateAccountTransactionBytes != "")
-    {
-      // TODO
-      std::cout <<std::endl<<std::endl<< "TODO execute: updateAccountTransactionBytes: " << updateAccountTransactionBytes << std::endl;
+    if (updateAccountTransactionBytes != "") {
+      std::vector<std::byte> bytes = UtilService::base64ToVector(updateAccountTransactionBytes);
+        const WrappedTransaction tx = Transaction<AccountUpdateTransaction>::fromBytes(bytes);
 
-      // std::vector<std::byte> bytes = UtilService::base64ToVector(updateAccountTransactionBytes);
-      // Transaction<TransferTransaction>::fromBytes(bytes);
-      
-      // auto [index, variant] = Transaction<AccountCreateTransaction>::fromBytes(bytes);
-                  
-      // std::cout << "INDEX: " << index << std::endl;
-      // std::cout << "variant: " << variant << std::endl;
+        switch (tx.getTransactionType()) {
+            case TransactionType::ACCOUNT_UPDATE_TRANSACTION: {
+                AccountUpdateTransaction accountUpdateTransaction = *tx.getTransaction<AccountUpdateTransaction>();
+                TransactionResponse txResp = accountUpdateTransaction
+                    .freezeWith(client)
+                    .sign(privateKey)
+                    .execute(*client);
+                break;
+            }
+            default: {
+              throw std::runtime_error("Unexpected transaction type at executeUpdateAccountTransactions() in updateAccountTransactionBytes");
+            }
+        }
     }
 
     if (transactionBytes != "") {
@@ -40,7 +45,7 @@ namespace AccountService {
                 break;
             }
             default: {
-              break;
+              throw std::runtime_error("Unexpected transaction type at executeUpdateAccountTransactions() in transactionBytes");
             }
         }
     }
