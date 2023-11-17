@@ -7,9 +7,9 @@ Creates new instance of Blade and initialize shared parameters. On this step lib
 ### Parameters
 
 * `const std::string& apiKey` - key for API provided by Blade team. Unique per network and sdkEnvironment.
-* `const Network& network` - network `BladeSDK::Network::Testnet` or `BladeSDK::Network::Mainnet`
+* `const [Network](data-types.md#network)& network` - network `BladeSDK::Network::Testnet` or `BladeSDK::Network::Mainnet`
 * `const std::string& dAppCode` - your dAppCode - request specific one by contacting us
-* `const SdkEnvironment& sdkEnvironment` - BladeApi environment - `BladeSDK::SdkEnvironment::CI` or `BladeSDK::SdkEnvironment::Prod`
+* `const [SdkEnvironment](data-types.md#sdkenvironment)& sdkEnvironment` - BladeApi environment - `BladeSDK::SdkEnvironment::CI` or `BladeSDK::SdkEnvironment::Prod`
 
 ### Example
 
