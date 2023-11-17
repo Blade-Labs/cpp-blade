@@ -56,7 +56,7 @@ struct AccountInfoData {
 ```cpp
 struct TokenBalance {
     std::string token_id;
-    unsigned long long balance; // Use 'unsigned long long' to match C#'s ulong
+    unsigned long long balance;
 
     TokenBalance(const std::string& tokenId, unsigned long long bal)
         : token_id(tokenId), balance(bal) {}
@@ -67,10 +67,9 @@ struct TokenBalance {
 
 ```cpp
 struct AccountBalanceData {
-    long long balance; // Use 'long long' to match C#'s long
+    long long balance;
     std::vector<TokenBalance> tokens;
 
-    // Constructor for AccountBalanceData
     AccountBalanceData(long long bal, const std::vector<TokenBalance>& tkns) 
         : balance(bal), tokens(tkns) {}
 };
@@ -127,9 +126,9 @@ struct Links {
 
 ```cpp
 struct TransfersRaw {
-    std::string account; //"0.0.3"
-    long long amount; //6777,
-    bool is_approval; //false
+    std::string account;
+    long long amount;
+    bool is_approval;
     std::string token_id;
 };
 ```
@@ -149,20 +148,16 @@ struct TransactionHistoryNftTransfer {
 
 ```cpp
 struct TransactionRaw {
-    // "bytes":null,
     long long charged_tx_fee;
     std::string consensus_timestamp;
-    // "entity_id":null,
     std::string max_fee;
     std::string memo_base64;
     std::string name;
-    std::vector<TransactionHistoryNftTransfer> nft_transfers; // TODO describe valid model
+    std::vector<TransactionHistoryNftTransfer> nft_transfers;
     std::string node;
     long long nonce;
-    // "parent_consensus_timestamp":null,
     std::string result;
     bool scheduled;
-    // "staking_reward_transfers":[],
     std::vector<TransfersRaw> token_transfers;
     std::string transaction_hash;
     std::string transaction_id;
@@ -193,7 +188,6 @@ struct TransactionData {
     std::string memo;
     long long fee;
     bool showDetailed;
-    // TransactionPlainData plainData;
     std::string consensusTimestamp;
 };
 ```
