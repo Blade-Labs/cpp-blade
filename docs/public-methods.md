@@ -23,7 +23,9 @@ BladeSDK::Blade blade = BladeSDK::Blade(apiKey, network, dAppCode, sdkEnvironmen
 std::cout << "Blade init: " << blade << std::endl;
 ```
 
-## InfoData getInfo()
+## getInfo
+
+#### InfoData getInfo()
 
 Returns blade instance shared params (apiKey, dAppCode, network, visitorId, sdkEnvironment, sdkVersion)
 
@@ -40,7 +42,9 @@ Get Blade info: {dAppCode: "unitysdktest", network: "TESTNET", apiKey: GgsRv5PWf
 ```
 
 
-## AccountData createAccount()
+## createAccount
+
+#### AccountData createAccount()
 
 Create Hedera account (ECDSA). Only for configured dApps. Depending on dApp config Blade create account, associate tokens, etc. In case of not using pre-created accounts pool and network high load, this method can return transactionId and no accountId. In that case account creation added to queue, and you should wait some time and call getPendingAccount() method.
 
@@ -58,7 +62,7 @@ Create Hedera account: {seedPhrase: "easily forward forward river bachelor task 
 
 ## deleteAccount
 
-### TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey)
+#### TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey)
 
 Delete Hedera account
 
@@ -82,7 +86,9 @@ Output:
 Delete account: {transactionId: "0.0.346533@1700131320.242081000", status: "SUCCESS", transactionReceipt: {Object TransactionReceipt}}
 ```
 
-## AccountInfoData getAccountInfo(std::string accountId)
+## getAccountInfo
+
+#### AccountInfoData getAccountInfo(std::string accountId)
 
 Get account info. EvmAddress is address of Hedera account if exists. Else accountId will be converted to solidity address. CalculatedEvmAddress is calculated from account public key. May be different from evmAddress.
 
@@ -102,7 +108,9 @@ Output:
 Get account info: {accountId: "0.0.346533", evmAddress: "0x11f8d856ff2af6700ccda4999845b2ed4502d8fb", publicKey: "029dc73991b0d9cdbb59b2cd0a97a0eaff6de801726cb39804ea9461df6be2dd30"}
 ```
 
-## AccountBalanceData getBalance(std::string accountId)
+## getBalance
+
+#### AccountBalanceData getBalance(std::string accountId)
 
 Get hbar and token balances for specific account.
 
@@ -122,7 +130,9 @@ Output:
 Account balance: {balance: 1000000000000, tokens: [{token_id: "0.0.59042", balance: 0}, {token_id: "0.0.61266", balance: 0}, {token_id: "0.0.416406", balance: 1000000000}, {token_id: "0.0.416458", balance: 1000000000}, {token_id: "0.0.416487", balance: 99849591049227}, {token_id: "0.0.433870", balance: 9816}, {token_id: "0.0.447892", balance: 20000000}, {token_id: "0.0.652199", balance: 999999952}]}
 ```
 
-## PrivateKeyData importAccount(std::string seedPhrase, bool lookupAccounts)
+## importAccount
+
+#### PrivateKeyData importAccount(std::string seedPhrase, bool lookupAccounts)
 
 Get ECDSA private key from mnemonic. Also try to find accountIds based on public key if `lookupAccounts` is true. Returned keys with DER header. EvmAddress computed from Public key.
 
@@ -143,7 +153,9 @@ Output:
 Import account: {privateKey: "3030020100300706052B8104000A04220420A7E529D9C0EA996FF62F9E41D5BE81FD67489E28B62CE22420BE130626D0EF40", publicKey: "302D300706052B8104000A0322000283529A9F1353613201042305827FB38110E94C3FD559E3CF9B5645DBE0E38368", seedPhrase: "best soccer little verify love ladder else kick depth mesh silly desert", accounts: [0.0.2018696]}
 ```
 
-## TxReceipt transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo)
+## transferHbars
+
+#### TxReceipt transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo)
 
 Send hbars to specific account.
 
@@ -167,7 +179,9 @@ Output:
 Transfer hbars: {transactionId: "0.0.346533@1700129947.125393000", status: "SUCCESS", transactionReceipt: {Object TransactionReceipt}}
 ```
 
-## TxReceipt transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer)
+## transferTokens
+
+#### TxReceipt transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer)
 
 Send token to specific account.
 
@@ -193,7 +207,9 @@ Output:
 Transfer tokens (paid): {transactionId: "0.0.346533@1700130243.724897000", status: "SUCCESS", transactionReceipt: {Object TransactionReceipt}}
 ```
 
-## SignMessageData sign(std::string message, std::string signerKey, std::string encoding)
+## sign
+
+#### SignMessageData sign(std::string message, std::string signerKey, std::string encoding)
 
 Sign message with private key. Returns hex-encoded signature.
 
@@ -223,7 +239,9 @@ Sign base64 (aGVsbG8=): {signedMessage: "41cb875722cc5f6c03989bbf4c49fa9fda3d69b
 Sign hex (68656c6c6f): {signedMessage: "350b2f5e5a182f55cbad6bd03a3fa5cfb05a3da52af7db94161ff7a51fa531e81d035979125cef242ac72b8d3b54c8898245bdf23df14b9df4f06f161f0d9d1d"}
 ```
 
-## bool signVerify(std::string message, std::string signatureHex, std::string key, std::string encoding)
+## signVerify
+
+#### bool signVerify(std::string message, std::string signatureHex, std::string key, std::string encoding)
 
 Verify message signature by public key.
 
@@ -265,7 +283,9 @@ Sign hex (68656c6c6f): {signedMessage: "1f83a26c1fee4a04789e1c327180fb03e6ff85ec
 Valid?: 1
 ```
 
-## TxReceipt contractCallFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee)
+## contractCallFunction
+
+#### TxReceipt contractCallFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee)
 
 Call contract function. Directly or via Blade Payer account (fee will be paid by Blade), depending on your dApp configuration.
 
@@ -292,7 +312,9 @@ Output:
 Contract call: {transactionId: "0.0.346533@1700133017.81407000", status: "SUCCESS", transactionReceipt: {Object TransactionReceipt}}
 ```
 
-## ContractFunctionResult contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, double maxQueryPayment, std::vector<std::string> returnTypes)
+## contractCallQueryFunction
+
+#### ContractFunctionResult contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, double maxQueryPayment, std::vector<std::string> returnTypes)
 
 Call query on contract function. Similar to contractCallFunction can be called directly only.
 
@@ -321,7 +343,9 @@ Output:
 Contract call query. string: cpp-sdk-test [self pay], int32: 23
 ```
 
-## std::string getC14url(std::string asset, std::string account, std::string amount)
+## getC14url
+
+#### std::string getC14url(std::string asset, std::string account, std::string amount)
 
 Get configured url for C14 integration (iframe or popup)
 
@@ -343,7 +367,9 @@ Output:
 Get c14 url: https://pay.c14.money/?clientId=00ce2e0a-ee66-4971-a0e9-b9d627d106b0&targetAssetId=057d6b35-1af5-4827-bee2-c12842faa49e&targetAssetIdLock=true&sourceAmount=1234&quoteAmountLock=true&targetAddress=0.0.123456&targetAddressLock=true
 ```
 
-## TransactionsHistoryData getTransactions(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit)
+## getTransactions
+
+#### TransactionsHistoryData getTransactions(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit)
 
 Get transactions history for account. Can be filtered by transaction type. Transaction requested from mirror node. Every transaction requested for child transactions. Result are flattened. If transaction type is not provided, all transactions will be returned.
 
