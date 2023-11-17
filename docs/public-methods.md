@@ -56,7 +56,9 @@ Output:
 Create Hedera account: {seedPhrase: "easily forward forward river bachelor task endorse sea inherit bonus polar sport", publicKey: "", privateKey: "3030020100300706052B8104000A0422042085FE29B639291C2534487D0663E15BADEAF5197ED6770FFDAF7FFF1EEEA27406", accountId: "0.0.5895062"}
 ```
 
-## TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey)
+## deleteAccount
+
+### TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey)
 
 Delete Hedera account
 
