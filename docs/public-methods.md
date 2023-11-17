@@ -7,9 +7,9 @@ Creates new instance of Blade and initialize shared parameters. On this step lib
 ### Parameters
 
 * `const std::string& apiKey` - key for API provided by Blade team. Unique per network and sdkEnvironment.
-* `const [Network](data-types.md#network)& network` - network `BladeSDK::Network::Testnet` or `BladeSDK::Network::Mainnet`
+* `const Network& network` - [BladeSDK::Network](data-types.md#network): `BladeSDK::Network::Testnet` or `BladeSDK::Network::Mainnet`
 * `const std::string& dAppCode` - your dAppCode - request specific one by contacting us
-* `const [SdkEnvironment](data-types.md#sdkenvironment)& sdkEnvironment` - BladeApi environment - `BladeSDK::SdkEnvironment::CI` or `BladeSDK::SdkEnvironment::Prod`
+* `const SdkEnvironment& sdkEnvironment` - BladeApi [SdkEnvironment](data-types.md#sdkenvironment) - `BladeSDK::SdkEnvironment::CI` or `BladeSDK::SdkEnvironment::Prod`
 
 ### Example
 
@@ -25,7 +25,7 @@ std::cout << "Blade init: " << blade << std::endl;
 
 ## getInfo
 
-#### InfoData getInfo()
+#### [InfoData](data-types.md#infodata) getInfo()
 
 Returns blade instance shared params (apiKey, dAppCode, network, visitorId, sdkEnvironment, sdkVersion)
 
@@ -44,7 +44,7 @@ Get Blade info: {dAppCode: "unitysdktest", network: "TESTNET", apiKey: GgsRv5PWf
 
 ## createAccount
 
-#### AccountData createAccount()
+#### [AccountData](data-types.md#accountdata) createAccount()
 
 Create Hedera account (ECDSA). Only for configured dApps. Depending on dApp config Blade create account, associate tokens, etc. In case of not using pre-created accounts pool and network high load, this method can return transactionId and no accountId. In that case account creation added to queue, and you should wait some time and call getPendingAccount() method.
 
@@ -62,7 +62,7 @@ Create Hedera account: {seedPhrase: "easily forward forward river bachelor task 
 
 ## deleteAccount
 
-#### TxReceipt deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey)
+#### [TxReceipt](data-types.md#txreceipt) deleteAccount(std::string deleteAccountId, std::string deletePrivateKey, std::string transferAccountId, std::string operatorAccountId, std::string operatorPrivateKey)
 
 Delete Hedera account
 
@@ -88,7 +88,7 @@ Delete account: {transactionId: "0.0.346533@1700131320.242081000", status: "SUCC
 
 ## getAccountInfo
 
-#### AccountInfoData getAccountInfo(std::string accountId)
+#### [AccountInfoData](data-types.md#accountinfodata) getAccountInfo(std::string accountId)
 
 Get account info. EvmAddress is address of Hedera account if exists. Else accountId will be converted to solidity address. CalculatedEvmAddress is calculated from account public key. May be different from evmAddress.
 
@@ -110,7 +110,7 @@ Get account info: {accountId: "0.0.346533", evmAddress: "0x11f8d856ff2af6700ccda
 
 ## getBalance
 
-#### AccountBalanceData getBalance(std::string accountId)
+#### [AccountBalanceData](data-types.md#accountbalancedata) getBalance(std::string accountId)
 
 Get hbar and token balances for specific account.
 
@@ -132,7 +132,7 @@ Account balance: {balance: 1000000000000, tokens: [{token_id: "0.0.59042", balan
 
 ## importAccount
 
-#### PrivateKeyData importAccount(std::string seedPhrase, bool lookupAccounts)
+#### [PrivateKeyData](data-types.md#privatekeydata) importAccount(std::string seedPhrase, bool lookupAccounts)
 
 Get ECDSA private key from mnemonic. Also try to find accountIds based on public key if `lookupAccounts` is true. Returned keys with DER header. EvmAddress computed from Public key.
 
@@ -155,7 +155,7 @@ Import account: {privateKey: "3030020100300706052B8104000A04220420A7E529D9C0EA99
 
 ## transferHbars
 
-#### TxReceipt transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo)
+#### [TxReceipt](data-types.md#txreceipt) transferHbars(std::string accountId, std::string accountPrivateKey, std::string recieverAccount, std::string amount, std::string memo)
 
 Send hbars to specific account.
 
@@ -181,7 +181,7 @@ Transfer hbars: {transactionId: "0.0.346533@1700129947.125393000", status: "SUCC
 
 ## transferTokens
 
-#### TxReceipt transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer)
+#### [TxReceipt](data-types.md#txreceipt) transferTokens(std::string tokenId, std::string accountId, std::string accountPrivateKey, std::string receiverId, std::string amount, std::string memo, bool freeTransfer)
 
 Send token to specific account.
 
@@ -209,7 +209,7 @@ Transfer tokens (paid): {transactionId: "0.0.346533@1700130243.724897000", statu
 
 ## sign
 
-#### SignMessageData sign(std::string message, std::string signerKey, std::string encoding)
+#### [SignMessageData](data-types.md#signmessagedata) sign(std::string message, std::string signerKey, std::string encoding)
 
 Sign message with private key. Returns hex-encoded signature.
 
@@ -285,7 +285,7 @@ Valid?: 1
 
 ## contractCallFunction
 
-#### TxReceipt contractCallFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee)
+#### [TxReceipt](data-types.md#txreceipt) contractCallFunction(std::string contractId, std::string functionName, [ContractFunctionParameters](https://github.com/hashgraph/hedera-sdk-cpp/blob/main/sdk/main/include/ContractFunctionParameters.h) parameters, std::string accountId, std::string accountPrivateKey, long long gas, bool bladePayFee)
 
 Call contract function. Directly or via Blade Payer account (fee will be paid by Blade), depending on your dApp configuration.
 
@@ -314,7 +314,7 @@ Contract call: {transactionId: "0.0.346533@1700133017.81407000", status: "SUCCES
 
 ## contractCallQueryFunction
 
-#### ContractFunctionResult contractCallQueryFunction(std::string contractId, std::string functionName, ContractFunctionParameters parameters, std::string accountId, std::string accountPrivateKey, long long gas, double maxQueryPayment, std::vector<std::string> returnTypes)
+#### [ContractFunctionResult](https://github.com/hashgraph/hedera-sdk-cpp/blob/main/sdk/main/include/ContractFunctionResult.h) contractCallQueryFunction(std::string contractId, std::string functionName, [ContractFunctionParameters](https://github.com/hashgraph/hedera-sdk-cpp/blob/main/sdk/main/include/ContractFunctionParameters.h) parameters, std::string accountId, std::string accountPrivateKey, long long gas, double maxQueryPayment, std::vector<std::string> returnTypes)
 
 Call query on contract function. Similar to contractCallFunction can be called directly only.
 
@@ -369,14 +369,14 @@ Get c14 url: https://pay.c14.money/?clientId=00ce2e0a-ee66-4971-a0e9-b9d627d106b
 
 ## getTransactions
 
-#### TransactionsHistoryData getTransactions(std::string accountId, std::string transactionType, std::string nextPage, int transactionsLimit)
+#### [TransactionsHistoryData](data-types.md#transactionshistorydata) getTransactions(std::string accountId, std::string [transactionType](https://mainnet.mirrornode.hedera.com/api/v1/docs/#/transactions/listTransactions), std::string nextPage, int transactionsLimit)
 
 Get transactions history for account. Can be filtered by transaction type. Transaction requested from mirror node. Every transaction requested for child transactions. Result are flattened. If transaction type is not provided, all transactions will be returned.
 
 ### Parameters
 
 * `std::string accountId` - account id to get transactions for (0.0.xxxxx)
-* `std::string transactionType` - one of enum  (`CRYPTOTRANSFER`, `CONTRACTCALL`, etc...)
+* `std::string transactionType` - one of available values (`CRYPTOTRANSFER`, `CONTRACTCALL`, etc...)
 * `std::string nextPage` - link to next page of transactions from previous request
 * `int transactionsLimit` - number of transactions to return. Speed of request depends on this value if transactionType is set.
 
